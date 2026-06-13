@@ -1,0 +1,65 @@
+Based on the product details for KidTrack (the open-hardware toddler safety watch built around the nRF52840 MCU, MAX-M8Q GPS, and LSM6DS3TR-C IMU), the companion mobile app needs to be highly optimized for local, Bluetooth-only (BLE) communication (unless the cellular stretch goal is met) and focused on real-time, zero-subscription data visualization.
+
+Here is a comprehensive list of features categorized into core domains:
+
+1. Real-Time Tracking & Mapping (Core Navigation)
+Because this is a BLE-centric tracker, the app needs to smartly handle proximity, offline maps, and last-known positions.
+
+Proximity Map View: A live map showing the parent’s phone location relative to the kid's watch.
+
+Offline Maps / Saching: Since the device operates without a cellular network, parents may use it in parks or campsites without internet. The app should allow downloading local maps.
+
+Last-Known Location (LKL) Pin: If the child goes out of the ~30-meter BLE range, the app must immediately drop a pin on the map marking the exact GPS coordinates where the signal was lost.
+
+IMU Dead-Reckoning Visualizer: When indoors (where GPS degrades), the app can use data from the 6-axis IMU to show an estimated path or vector of where the toddler moved after losing satellite lock.
+
+2. Smart Alerts & Safety (Proactive Monitoring)
+Virtual BLE Tether (Geofencing): An adjustable "digital leash" (e.g., 10m, 20m, 30m). If the BLE signal strength drops below a certain threshold (the child is wandering too far), the phone triggers a loud, distinct alarm.
+
+Reconnection Alert: A subtle, reassuring notification when the child comes back into BLE range.
+
+Tamper/Removal Detection: Using sudden spikes in the IMU (gyroscope/accelerometer) data or rapid temperature shifts to alert the parent if the watch is forcefully pulled off or dropped.
+
+3. Health, Activity & Sleep Analytics
+The hardware features an advanced 6-axis IMU that classifies motion patterns directly on-device. The app should turn this raw telemetry into actionable metrics:
+
+Activity Metrics Dashboard:
+
+Step-Equivalent Counter: Translates toddler shuffling/running into an easy-to-read daily step count.
+
+Active Play vs. Stillness Time: A ring or pie chart showing hours spent running/playing versus sitting.
+
+Automated Sleep & Nap Logger: * Because the watch auto-detects sleep without button-pressing, the app should feature a Sleep History Calendar.
+
+Shows total overnight sleep duration, nap times (morning vs. afternoon), and sleep quality (restlessness based on micro-movements).
+
+"Toddler Awake" Push Notification: Triggers a silent or quiet alert on the parent's phone the moment the IMU registers wakeful movement after a nap.
+
+4. Device Management & Power Metrics
+Battery management is crucial since runtime varies between 18 hours and 4 days depending on how aggressive the GPS tracking is.
+
+Dynamic Battery Life Indicator: Displays exact battery percentage (via the A0 analog pin telemetry).
+
+Battery-to-Time Calculator: Displays estimated remaining battery in hours based on current usage patterns.
+
+Adaptive GPS Polling Toggle: A slider in the app allowing parents to trade battery for accuracy:
+
+High-Security Mode: 5-second interval updates (lasts ~18–24 hours, best for crowded parks).
+
+Battery-Saver Mode: 30-second intervals (lasts 3–4 days, best for a weekend at home).
+
+Low Battery Warn System: Sends a critical notification to the phone when the watch drops to 20% and 10%.
+
+5. Open-Source & Developer-Friendly Features
+Since KidTrack brands itself as an open-source, hackable, zero-subscription community product, the app should embrace this audience.
+
+Raw Telemetry Stream (Dev Mode): A toggleable console view displaying real-time NMEA GPS sentences, raw X/Y/Z accelerometer metrics, and BLE RSSI signal strength.
+
+OTA (Over-The-Air) Firmware Updates: The ability to flash updated firmware versions or community-made custom watch scripts onto the nRF52840 MCU via BLE directly from the app.
+
+Data Export: A button to export the child’s location history, sleep logs, and activity metrics into standard formats (.CSV, .GPX, .JSON) so parents can map it in Google Earth or store it locally.
+
+6. Multi-Device & Profile Management
+Multi-Child Dashboard: Allows a parent to pair and swap between multiple KidTrack watches simultaneously if they have more than one child.
+
+Co-Parent Sync (Local Link): The ability to securely authorize a second phone (e.g., the other parent or a babysitter) to pair with the BLE profile, turning whichever phone is closest into the active tracking terminal.

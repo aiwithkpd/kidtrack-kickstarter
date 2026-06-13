@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KidTrack · Build Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --dk-purple-50:#F2F0F7; --dk-purple-100:#E5E0EF; --dk-purple-200:#C7BDE0;
+  --dk-purple-500:#9985C2; --dk-purple-600:#8A74B5; --dk-purple-700:#7660A8;
+  --dk-purple-800:#5E4C89; --dk-purple-900:#3D3057;
+  --dk-gray-50:#F9F9F9; --dk-gray-100:#F0F0F0; --dk-gray-200:#E0E0E0;
+  --dk-gray-400:#A0A0A0; --dk-gray-600:#606060; --dk-gray-800:#1A1A1A;
+  --dk-radius-sm:4px; --dk-radius-md:8px; --dk-radius-lg:12px; --dk-radius-xl:16px; --dk-radius-2xl:24px;
+  --dk-shadow-sm:0 1px 3px rgba(0,0,0,.06);
+  --dk-shadow-md:0 4px 16px rgba(118,96,168,.12);
+  --dk-shadow-brand:0 8px 32px rgba(118,96,168,.20);
+  --status-todo:#6B7280; --status-todo-bg:#F3F4F6;
+  --status-in_progress:#2563EB; --status-in_progress-bg:#EFF6FF;
+  --status-review:#D97706; --status-review-bg:#FFFBEB;
+  --status-completed:#059669; --status-completed-bg:#ECFDF5;
+  --status-blocked:#DC2626; --status-blocked-bg:#FEF2F2;
+  --p0:#DC2626; --p0-bg:#FEF2F2;
+  --p1:#D97706; --p1-bg:#FFFBEB;
+  --p2:#2563EB; --p2-bg:#EFF6FF;
+  --p3:#6B7280; --p3-bg:#F3F4F6;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family:'Poppins',sans-serif; background:#F7F5FB; color:var(--dk-gray-800); min-height:100vh; }
+
+/* ── NAV ─────────────────────────────────────────────────────────────── */
+nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(255,255,255,.95); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--dk-purple-100);
+  padding:0 24px; height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:var(--dk-shadow-sm);
+}
+.nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nav-logo {
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(135deg,var(--dk-purple-700),var(--dk-purple-500));
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; color:#fff; font-weight:700;
+}
+.nav-title { font-size:16px; font-weight:700; color:var(--dk-purple-800); }
+.nav-links { display:flex; gap:6px; }
+.nav-links a {
+  font-size:13px; font-weight:500; color:var(--dk-gray-600);
+  text-decoration:none; padding:6px 14px; border-radius:var(--dk-radius-md);
+  transition:all .15s;
+}
+.nav-links a:hover { background:var(--dk-purple-50); color:var(--dk-purple-700); }
+.nav-links a.active { background:var(--dk-purple-700); color:#fff; }
+
+/* ── LAYOUT ──────────────────────────────────────────────────────────── */
+.layout { display:flex; max-width:1280px; margin:0 auto; padding:32px 24px; gap:28px; }
+
+/* ── SIDEBAR ─────────────────────────────────────────────────────────── */
+aside {
+  width:230px; flex-shrink:0;
+  position:sticky; top:76px; align-self:flex-start;
+  background:#fff; border-radius:var(--dk-radius-xl);
+  border:1px solid var(--dk-purple-100);
+  padding:16px 0; box-shadow:var(--dk-shadow-sm);
+  max-height:calc(100vh - 100px); overflow-y:auto;
+}
+.aside-header { font-size:11px; font-weight:600; color:var(--dk-gray-400); letter-spacing:.08em; text-transform:uppercase; padding:0 16px 8px; }
+.phase-nav-item {
+  display:flex; align-items:center; gap:8px;
+  padding:9px 16px; cursor:pointer;
+  font-size:13px; font-weight:500; color:var(--dk-gray-600);
+  border-left:3px solid transparent; transition:all .15s;
+}
+.phase-nav-item:hover { background:var(--dk-purple-50); color:var(--dk-purple-700); }
+.phase-nav-item.active { border-left-color:var(--dk-purple-700); background:var(--dk-purple-50); color:var(--dk-purple-700); }
+.phase-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.aside-divider { height:1px; background:var(--dk-gray-100); margin:8px 16px; }
+.aside-filter { padding:8px 16px; }
+.aside-filter label { display:block; font-size:11px; font-weight:600; color:var(--dk-gray-400); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+.aside-filter select {
+  width:100%; border:1px solid var(--dk-gray-200); border-radius:var(--dk-radius-md);
+  padding:6px 8px; font-family:'Poppins',sans-serif; font-size:12px; color:var(--dk-gray-800);
+  background:#fff; cursor:pointer; outline:none;
+}
+.aside-filter select:focus { border-color:var(--dk-purple-500); }
+
+/* ── MAIN ────────────────────────────────────────────────────────────── */
+main { flex:1; min-width:0; }
+
+/* ── STATS BAR ───────────────────────────────────────────────────────── */
+.stats-bar {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:12px;
+  margin-bottom:24px;
+}
+.stat-card {
+  background:#fff; border-radius:var(--dk-radius-lg);
+  border:1px solid var(--dk-gray-100); padding:14px 16px;
+  box-shadow:var(--dk-shadow-sm); text-align:center;
+}
+.stat-count { font-size:24px; font-weight:700; line-height:1; }
+.stat-label { font-size:11px; color:var(--dk-gray-400); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
+
+/* ── PHASE SECTION ───────────────────────────────────────────────────── */
+.phase-section { margin-bottom:24px; }
+.phase-header {
+  background:#fff; border-radius:var(--dk-radius-xl);
+  border:1px solid var(--dk-gray-100); padding:20px 24px;
+  box-shadow:var(--dk-shadow-sm); cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:border-color .2s;
+}
+.phase-header:hover { border-color:var(--dk-purple-200); }
+.phase-header-left { display:flex; align-items:center; gap:14px; }
+.phase-tag {
+  width:40px; height:40px; border-radius:var(--dk-radius-md);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; color:#fff; flex-shrink:0;
+}
+.phase-meta h3 { font-size:15px; font-weight:600; color:var(--dk-gray-800); }
+.phase-meta p { font-size:12px; color:var(--dk-gray-400); margin-top:2px; }
+.phase-right { display:flex; align-items:center; gap:16px; }
+.phase-progress-wrap { text-align:right; }
+.phase-pct { font-size:18px; font-weight:700; color:var(--dk-purple-700); }
+.phase-pct-label { font-size:11px; color:var(--dk-gray-400); }
+.phase-bar-outer {
+  width:160px; height:6px; background:var(--dk-gray-100);
+  border-radius:3px; overflow:hidden; margin-top:4px;
+}
+.phase-bar-inner { height:100%; border-radius:3px; transition:width .4s; }
+.phase-collapse-icon { font-size:18px; color:var(--dk-gray-400); transition:transform .2s; }
+.phase-collapse-icon.open { transform:rotate(180deg); }
+.phase-status-chips { display:flex; gap:6px; flex-wrap:wrap; }
+.chip { display:flex; align-items:center; gap:4px; font-size:11px; font-weight:500; padding:3px 8px; border-radius:20px; }
+
+/* ── TASK BODY ───────────────────────────────────────────────────────── */
+.task-body { margin-top:8px; }
+.domain-group { margin-bottom:8px; }
+.domain-label {
+  font-size:11px; font-weight:600; color:var(--dk-gray-400);
+  text-transform:uppercase; letter-spacing:.08em;
+  padding:10px 20px 4px; display:flex; align-items:center; gap:8px;
+}
+.domain-label::after { content:''; flex:1; height:1px; background:var(--dk-gray-100); }
+
+/* Feature card */
+.feature-card {
+  background:#fff; border-radius:var(--dk-radius-lg);
+  border:1px solid var(--dk-gray-100); margin-bottom:6px;
+  box-shadow:var(--dk-shadow-sm); overflow:hidden;
+  transition:border-color .15s;
+}
+.feature-card:hover { border-color:var(--dk-purple-200); }
+.feature-row {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; cursor:pointer;
+}
+.feature-expand { font-size:12px; color:var(--dk-gray-400); transition:transform .2s; flex-shrink:0; }
+.feature-expand.open { transform:rotate(90deg); }
+.feature-name { flex:1; font-size:13px; font-weight:500; color:var(--dk-gray-800); }
+.feature-progress { display:flex; align-items:center; gap:8px; }
+.mini-bar { width:60px; height:4px; background:var(--dk-gray-100); border-radius:2px; overflow:hidden; }
+.mini-bar-fill { height:100%; background:var(--dk-purple-600); border-radius:2px; transition:width .3s; }
+.mini-pct { font-size:11px; color:var(--dk-gray-400); min-width:28px; text-align:right; }
+.badge {
+  font-size:10px; font-weight:600; padding:2px 7px; border-radius:20px;
+  white-space:nowrap; cursor:pointer; user-select:none;
+  transition:opacity .1s; border:none; font-family:'Poppins',sans-serif;
+}
+.badge:hover { opacity:.8; }
+.badge-p0 { color:var(--p0); background:var(--p0-bg); }
+.badge-p1 { color:var(--p1); background:var(--p1-bg); }
+.badge-p2 { color:var(--p2); background:var(--p2-bg); }
+.badge-p3 { color:var(--p3); background:var(--p3-bg); }
+.badge-todo      { color:var(--status-todo);        background:var(--status-todo-bg); }
+.badge-in_progress{ color:var(--status-in_progress); background:var(--status-in_progress-bg); }
+.badge-review    { color:var(--status-review);      background:var(--status-review-bg); }
+.badge-completed { color:var(--status-completed);   background:var(--status-completed-bg); }
+.badge-blocked   { color:var(--status-blocked);     background:var(--status-blocked-bg); }
+
+/* Subtasks */
+.subtask-list { border-top:1px solid var(--dk-gray-100); }
+.subtask-row {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 16px 9px 36px;
+  border-bottom:1px solid var(--dk-gray-100); transition:background .1s;
+}
+.subtask-row:last-child { border-bottom:none; }
+.subtask-row:hover { background:var(--dk-purple-50); }
+.subtask-name { flex:1; font-size:12px; color:var(--dk-gray-600); }
+.subtask-desc { font-size:11px; color:var(--dk-gray-400); margin-top:1px; }
+.subtask-text { flex:1; }
+
+/* Loading */
+.loading { text-align:center; padding:80px 0; color:var(--dk-gray-400); font-size:14px; }
+.spinner { width:36px; height:36px; border:3px solid var(--dk-purple-100); border-top-color:var(--dk-purple-700); border-radius:50%; animation:spin .7s linear infinite; margin:0 auto 16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Toast */
+.toast {
+  position:fixed; bottom:24px; right:24px; z-index:1000;
+  background:#1A1A1A; color:#fff; font-size:13px; font-weight:500;
+  padding:10px 18px; border-radius:var(--dk-radius-lg);
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+  transform:translateY(80px); opacity:0; transition:all .25s;
+  pointer-events:none;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+
+/* Responsive */
+@media(max-width:900px) {
+  aside { display:none; }
+  .stats-bar { grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:600px) {
+  .stats-bar { grid-template-columns:1fr 1fr; }
+  .phase-bar-outer { display:none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo">K</div>
+    <span class="nav-title">KidTrack</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Campaign</a>
+    <a href="prd.html">PRD</a>
+    <a href="tracker.html" class="active">Tracker</a>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside id="sidebar">
+    <div class="aside-header">Phases</div>
+    <div id="phase-nav"></div>
+    <div class="aside-divider"></div>
+    <div class="aside-filter">
+      <label>Filter by status</label>
+      <select id="filter-status">
+        <option value="all">All statuses</option>
+        <option value="todo">Todo</option>
+        <option value="in_progress">In Progress</option>
+        <option value="review">Review</option>
+        <option value="completed">Completed</option>
+        <option value="blocked">Blocked</option>
+      </select>
+    </div>
+    <div class="aside-filter">
+      <label>Filter by priority</label>
+      <select id="filter-priority">
+        <option value="all">All priorities</option>
+        <option value="P0">P0 — Critical</option>
+        <option value="P1">P1 — High</option>
+        <option value="P2">P2 — Medium</option>
+        <option value="P3">P3 — Low</option>
+      </select>
+    </div>
+  </aside>
+
+  <main>
+    <div id="app">
+      <div class="loading">
+        <div class="spinner"></div>
+        Loading build tracker…
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STATUS_CYCLE = ['todo','in_progress','review','completed','blocked'];
+const STATUS_LABEL = { todo:'Todo', in_progress:'In Progress', review:'Review', completed:'Completed', blocked:'Blocked' };
+const PRIORITY_COLORS = { P0:'badge-p0', P1:'badge-p1', P2:'badge-p2', P3:'badge-p3' };
+
+let allPhases = [], allTasks = [], filters = { status:'all', priority:'all' };
+
+// ── Fetch ──────────────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const res = await fetch('/api/tasks');
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    allPhases = data.phases;
+    allTasks  = data.tasks;
+    render();
+  } catch (e) {
+    document.getElementById('app').innerHTML =
+      `<div class="loading" style="color:#DC2626">Failed to load: ${e.message}</div>`;
+  }
+}
+
+// ── PATCH status ───────────────────────────────────────────────────────────
+async function patchTask(id, updates) {
+  const res = await fetch('/api/tasks', {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ id, ...updates }),
+  });
+  if (!res.ok) { showToast('Update failed'); return null; }
+  const updated = await res.json();
+  const idx = allTasks.findIndex(t => t.id === id);
+  if (idx !== -1) allTasks[idx] = updated;
+  return updated;
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ── Cycle status ───────────────────────────────────────────────────────────
+async function cycleStatus(taskId) {
+  const task = allTasks.find(t => t.id === taskId);
+  if (!task) return;
+  const nextStatus = STATUS_CYCLE[(STATUS_CYCLE.indexOf(task.status) + 1) % STATUS_CYCLE.length];
+  await patchTask(taskId, { status: nextStatus });
+  showToast(`→ ${STATUS_LABEL[nextStatus]}`);
+  render();
+}
+
+// ── Global stats ───────────────────────────────────────────────────────────
+function computeGlobalStats() {
+  const s = { todo:0, in_progress:0, review:0, completed:0, blocked:0 };
+  allTasks.forEach(t => { if (s[t.status] !== undefined) s[t.status]++; });
+  return s;
+}
+
+// ── Feature progress from subtasks ────────────────────────────────────────
+function featureProgress(featureId) {
+  const subs = allTasks.filter(t => t.parent_id == featureId);
+  if (!subs.length) {
+    const feat = allTasks.find(t => t.id === featureId);
+    return feat ? (feat.status === 'completed' ? 100 : feat.progress) : 0;
+  }
+  const done = subs.filter(t => t.status === 'completed').length;
+  return Math.round((done / subs.length) * 100);
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function render() {
+  const app = document.getElementById('app');
+  const gs = computeGlobalStats();
+  const total = allTasks.length;
+  const completed = gs.completed;
+  const globalPct = total ? Math.round((completed / total) * 100) : 0;
+
+  let html = `
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-count" style="color:var(--dk-purple-700)">${globalPct}%</div>
+      <div class="stat-label">Overall</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-count" style="color:var(--status-completed)">${gs.completed}</div>
+      <div class="stat-label">Completed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-count" style="color:var(--status-in_progress)">${gs.in_progress}</div>
+      <div class="stat-label">In Progress</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-count" style="color:var(--status-review)">${gs.review}</div>
+      <div class="stat-label">Review</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-count" style="color:var(--status-blocked)">${gs.blocked}</div>
+      <div class="stat-label">Blocked</div>
+    </div>
+  </div>`;
+
+  allPhases.forEach(phase => {
+    const phaseFeatures = allTasks.filter(t => t.phase_id == phase.id && t.parent_id == null);
+    const phaseTasks    = allTasks.filter(t => t.phase_id == phase.id);
+    const phaseCompleted = phaseTasks.filter(t => t.status === 'completed').length;
+    const phasePct = phaseTasks.length ? Math.round((phaseCompleted / phaseTasks.length) * 100) : 0;
+
+    // Apply filters to features
+    const filteredFeatures = phaseFeatures.filter(feat => {
+      if (filters.priority !== 'all' && feat.priority !== filters.priority) return false;
+      if (filters.status !== 'all') {
+        const subs = allTasks.filter(t => t.parent_id == feat.id);
+        const relevant = subs.length ? subs : [feat];
+        if (!relevant.some(t => t.status === filters.status)) return false;
+      }
+      return true;
+    });
+    if (!filteredFeatures.length && (filters.status !== 'all' || filters.priority !== 'all')) return;
+
+    // Group features by domain
+    const domains = {};
+    filteredFeatures.forEach(feat => {
+      if (!domains[feat.domain]) domains[feat.domain] = [];
+      domains[feat.domain].push(feat);
+    });
+
+    const stats = phase.stats;
+    html += `
+    <div class="phase-section" id="phase-${phase.id}">
+      <div class="phase-header" onclick="togglePhase(${phase.id})">
+        <div class="phase-header-left">
+          <div class="phase-tag" style="background:${phase.color}">P${phase.order_num}</div>
+          <div class="phase-meta">
+            <h3>${phase.name}</h3>
+            <p>${phase.timeline} · ${phaseFeatures.length} features · ${phaseTasks.length} tasks</p>
+          </div>
+        </div>
+        <div class="phase-right">
+          <div class="phase-status-chips">
+            ${stats.completed ? `<span class="chip" style="color:var(--status-completed);background:var(--status-completed-bg)">✓ ${stats.completed}</span>` : ''}
+            ${stats.in_progress ? `<span class="chip" style="color:var(--status-in_progress);background:var(--status-in_progress-bg)">● ${stats.in_progress}</span>` : ''}
+            ${stats.blocked ? `<span class="chip" style="color:var(--status-blocked);background:var(--status-blocked-bg)">! ${stats.blocked}</span>` : ''}
+          </div>
+          <div class="phase-progress-wrap">
+            <div class="phase-pct">${phasePct}%</div>
+            <div class="phase-pct-label">complete</div>
+            <div class="phase-bar-outer"><div class="phase-bar-inner" style="width:${phasePct}%;background:${phase.color}"></div></div>
+          </div>
+          <div class="phase-collapse-icon open" id="chevron-${phase.id}">▾</div>
+        </div>
+      </div>
+      <div class="task-body" id="phase-body-${phase.id}">`;
+
+    Object.entries(domains).forEach(([domain, features]) => {
+      html += `<div class="domain-group">
+        <div class="domain-label">${domain}</div>`;
+
+      features.forEach(feat => {
+        const subs = allTasks.filter(t => t.parent_id == feat.id);
+        const filteredSubs = filters.status !== 'all'
+          ? subs.filter(t => t.status === filters.status)
+          : subs;
+        const pct = featureProgress(feat.id);
+
+        html += `
+        <div class="feature-card">
+          <div class="feature-row" onclick="toggleFeature(${feat.id})">
+            <span class="feature-expand${subs.length ? '' : ' hidden'}" id="fexp-${feat.id}">▶</span>
+            <span class="badge ${PRIORITY_COLORS[feat.priority]}">${feat.priority}</span>
+            <span class="feature-name">${feat.name}</span>
+            <span class="feature-progress">
+              <span class="mini-bar"><span class="mini-bar-fill" style="width:${pct}%"></span></span>
+              <span class="mini-pct">${pct}%</span>
+            </span>
+            <button class="badge badge-${feat.status}" onclick="event.stopPropagation();cycleStatus(${feat.id})" title="Click to advance status">
+              ${STATUS_LABEL[feat.status]}
+            </button>
+          </div>`;
+
+        if (subs.length) {
+          html += `<div class="subtask-list" id="flist-${feat.id}" style="display:none">`;
+          filteredSubs.forEach(sub => {
+            html += `
+            <div class="subtask-row">
+              <div class="subtask-text">
+                <div class="subtask-name">${sub.name}</div>
+              </div>
+              <span class="badge ${PRIORITY_COLORS[sub.priority]}">${sub.priority}</span>
+              <button class="badge badge-${sub.status}" onclick="cycleStatus(${sub.id})" title="Click to advance status">
+                ${STATUS_LABEL[sub.status]}
+              </button>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+
+        html += `</div>`; // feature-card
+      });
+
+      html += `</div>`; // domain-group
+    });
+
+    html += `</div></div>`; // task-body, phase-section
+  });
+
+  app.innerHTML = html;
+  renderSidebar();
+}
+
+// ── Toggle helpers ─────────────────────────────────────────────────────────
+function togglePhase(id) {
+  const body = document.getElementById(`phase-body-${id}`);
+  const chev = document.getElementById(`chevron-${id}`);
+  const hidden = body.style.display === 'none';
+  body.style.display = hidden ? '' : 'none';
+  chev.classList.toggle('open', hidden);
+}
+function toggleFeature(id) {
+  const list = document.getElementById(`flist-${id}`);
+  const exp  = document.getElementById(`fexp-${id}`);
+  if (!list) return;
+  const hidden = list.style.display === 'none';
+  list.style.display = hidden ? '' : 'none';
+  if (exp) exp.classList.toggle('open', hidden);
+}
+
+// ── Sidebar ────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const nav = document.getElementById('phase-nav');
+  nav.innerHTML = allPhases.map(p => {
+    const phaseTasks = allTasks.filter(t => t.phase_id == p.id);
+    const done = phaseTasks.filter(t => t.status === 'completed').length;
+    const pct = phaseTasks.length ? Math.round((done / phaseTasks.length) * 100) : 0;
+    return `
+    <div class="phase-nav-item" onclick="scrollToPhase(${p.id})">
+      <div class="phase-dot" style="background:${p.color}"></div>
+      <span style="flex:1">Phase ${p.order_num}: ${p.name}</span>
+      <span style="font-size:11px;color:var(--dk-gray-400)">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Highlight active on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const phaseId = e.target.id.replace('phase-','');
+        document.querySelectorAll('.phase-nav-item').forEach((el, i) => {
+          el.classList.toggle('active', allPhases[i]?.id == phaseId);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+  document.querySelectorAll('.phase-section').forEach(el => observer.observe(el));
+}
+
+function scrollToPhase(id) {
+  const el = document.getElementById(`phase-${id}`);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ── Filters ────────────────────────────────────────────────────────────────
+document.getElementById('filter-status').addEventListener('change', e => {
+  filters.status = e.target.value; render();
+});
+document.getElementById('filter-priority').addEventListener('change', e => {
+  filters.priority = e.target.value; render();
+});
+
+// ── Boot ───────────────────────────────────────────────────────────────────
+load();
+</script>
+</body>
+</html>

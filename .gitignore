@@ -1,3 +1,9 @@
 child_tracker_watch_files.zip
 child_tracker_watch_files/
 .DS_Store
+.vercel
+.venv/
+db_setup.py
+*.mp4
+*.mp3
+*.png
