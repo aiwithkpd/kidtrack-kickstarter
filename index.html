@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KidTrack — The Open-Hardware Toddler Safety Watch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DKube Design System — Colors & Type Tokens
+       (adapted from colors_and_type.css for self-contained use)
+       ============================================================ */
+    :root {
+      --dk-purple-900: #4A3878;
+      --dk-purple-800: #5C4A8E;
+      --dk-purple-700: #7660A8;
+      --dk-purple-600: #8773B5;
+      --dk-purple-500: #9384BD;
+      --dk-purple-400: #B0A4CE;
+      --dk-purple-300: #C9C0DE;
+      --dk-purple-200: #E2DCEE;
+      --dk-purple-100: #F1EEF8;
+      --dk-purple-50:  #F8F6FB;
+
+      --dk-ink:        #0F0F12;
+      --dk-gray-900:   #1A1A20;
+      --dk-gray-800:   #2B2B33;
+      --dk-gray-700:   #404049;
+      --dk-gray-600:   #5A5A66;
+      --dk-gray-500:   #7A7A85;
+      --dk-gray-400:   #A3A3AC;
+      --dk-gray-300:   #D6D6D6;
+      --dk-gray-200:   #E8E8EC;
+      --dk-gray-100:   #F2F2F4;
+      --dk-gray-50:    #F8F8FA;
+      --dk-white:      #FFFFFF;
+
+      --dk-success:    #2E8B57;
+      --dk-success-bg: #E6F4EC;
+      --dk-warning:    #C28A00;
+      --dk-warning-bg: #FBF1DC;
+      --dk-info:       #2C6CB0;
+      --dk-info-bg:    #E5EFF9;
+
+      --dk-bg:            var(--dk-white);
+      --dk-bg-muted:      var(--dk-gray-50);
+      --dk-bg-tint:       var(--dk-purple-50);
+      --dk-bg-inverse:    var(--dk-ink);
+
+      --dk-fg:            var(--dk-ink);
+      --dk-fg-1:          var(--dk-gray-700);
+      --dk-fg-2:          var(--dk-gray-500);
+      --dk-fg-muted:      var(--dk-gray-400);
+      --dk-fg-on-brand:   var(--dk-white);
+
+      --dk-brand:         var(--dk-purple-700);
+      --dk-brand-hover:   var(--dk-purple-800);
+      --dk-brand-press:   var(--dk-purple-900);
+      --dk-brand-soft:    var(--dk-purple-100);
+
+      --dk-border:        var(--dk-gray-200);
+      --dk-border-strong: var(--dk-gray-300);
+      --dk-border-brand:  var(--dk-purple-300);
+
+      --dk-font-sans:    'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --dk-font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+      --dk-font-mono:    ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+      --dk-text-xs:  12px;
+      --dk-text-sm:  14px;
+      --dk-text-md:  16px;
+      --dk-text-lg:  18px;
+      --dk-text-xl:  20px;
+      --dk-text-2xl: 24px;
+      --dk-text-3xl: 32px;
+      --dk-text-4xl: 40px;
+      --dk-text-5xl: 56px;
+
+      --dk-lh-tight:   1.05;
+      --dk-lh-snug:    1.15;
+      --dk-lh-normal:  1.5;
+      --dk-lh-relaxed: 1.65;
+
+      --dk-tracking-tight: -0.025em;
+      --dk-tracking-snug:  -0.015em;
+      --dk-tracking-wide:   0.04em;
+
+      --dk-weight-regular:  400;
+      --dk-weight-medium:   500;
+      --dk-weight-semibold: 600;
+      --dk-weight-bold:     700;
+      --dk-weight-black:    800;
+
+      --dk-space-1:  4px;
+      --dk-space-2:  8px;
+      --dk-space-3:  12px;
+      --dk-space-4:  16px;
+      --dk-space-5:  20px;
+      --dk-space-6:  24px;
+      --dk-space-8:  32px;
+      --dk-space-10: 40px;
+      --dk-space-12: 48px;
+      --dk-space-16: 64px;
+      --dk-space-20: 80px;
+      --dk-space-24: 96px;
+
+      --dk-radius-xs:  4px;
+      --dk-radius-sm:  8px;
+      --dk-radius-md:  12px;
+      --dk-radius-lg:  16px;
+      --dk-radius-xl:  24px;
+      --dk-radius-2xl: 32px;
+      --dk-radius-pill: 999px;
+
+      --dk-shadow-xs:    0 1px 2px rgba(15,15,18,0.04);
+      --dk-shadow-sm:    0 2px 6px rgba(15,15,18,0.06);
+      --dk-shadow-md:    0 8px 20px rgba(15,15,18,0.08);
+      --dk-shadow-lg:    0 18px 40px rgba(15,15,18,0.10);
+      --dk-shadow-brand: 0 12px 28px rgba(118,96,168,0.28);
+
+      --dk-ease-out:  cubic-bezier(0.22,1,0.36,1);
+      --dk-dur-base:  240ms;
+      --dk-dur-slow:  420ms;
+
+      --dk-container-max: 1100px;
+      --dk-container-pad: 24px;
+    }
+
+    /* ============================================================
+       BASE RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--dk-font-sans);
+      font-size: var(--dk-text-md);
+      line-height: var(--dk-lh-relaxed);
+      color: var(--dk-fg-1);
+      background: var(--dk-bg);
+    }
+    img { max-width: 100%; display: block; }
+    a { color: var(--dk-brand); text-decoration: none; }
+    a:hover { color: var(--dk-brand-hover); }
+
+    /* ============================================================
+       LAYOUT UTILITIES
+       ============================================================ */
+    .container {
+      max-width: var(--dk-container-max);
+      margin: 0 auto;
+      padding: 0 var(--dk-container-pad);
+    }
+    .section { padding: var(--dk-space-20) 0; }
+    .section-sm { padding: var(--dk-space-12) 0; }
+    .section-lg { padding: var(--dk-space-24) 0; }
+    .section-alt { background: var(--dk-bg-muted); }
+    .section-tint { background: var(--dk-bg-tint); }
+    .section-dark {
+      background: var(--dk-bg-inverse);
+      color: var(--dk-fg-inverse);
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--dk-space-8); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--dk-space-6); }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--dk-space-6); }
+    .flex-center { display: flex; align-items: center; justify-content: center; }
+    .flex-between { display: flex; align-items: center; justify-content: space-between; }
+    .text-center { text-align: center; }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .hero-layout { flex-direction: column !important; }
+    }
+    @media (max-width: 900px) {
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+      .grid-4 { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ============================================================
+       TYPE CLASSES (from design system)
+       ============================================================ */
+    .dk-eyebrow {
+      font-family: var(--dk-font-sans);
+      font-size: var(--dk-text-sm);
+      font-weight: var(--dk-weight-semibold);
+      letter-spacing: var(--dk-tracking-wide);
+      text-transform: uppercase;
+      color: var(--dk-brand);
+    }
+    .dk-h1 {
+      font-family: var(--dk-font-display);
+      font-size: clamp(36px, 5.5vw, var(--dk-text-5xl));
+      font-weight: var(--dk-weight-bold);
+      line-height: var(--dk-lh-tight);
+      letter-spacing: var(--dk-tracking-tight);
+      color: var(--dk-fg);
+    }
+    .dk-h2 {
+      font-family: var(--dk-font-display);
+      font-size: clamp(28px, 3.5vw, var(--dk-text-4xl));
+      font-weight: var(--dk-weight-bold);
+      line-height: var(--dk-lh-snug);
+      letter-spacing: var(--dk-tracking-snug);
+      color: var(--dk-fg);
+    }
+    .dk-h3 {
+      font-family: var(--dk-font-display);
+      font-size: var(--dk-text-3xl);
+      font-weight: var(--dk-weight-bold);
+      line-height: var(--dk-lh-snug);
+      letter-spacing: var(--dk-tracking-snug);
+      color: var(--dk-fg);
+    }
+    .dk-h4 {
+      font-family: var(--dk-font-sans);
+      font-size: var(--dk-text-2xl);
+      font-weight: var(--dk-weight-semibold);
+      line-height: var(--dk-lh-snug);
+      color: var(--dk-fg);
+    }
+    .dk-lead {
+      font-size: var(--dk-text-xl);
+      font-weight: var(--dk-weight-regular);
+      line-height: var(--dk-lh-relaxed);
+      color: var(--dk-fg-1);
+    }
+    .dk-body {
+      font-size: var(--dk-text-md);
+      line-height: var(--dk-lh-relaxed);
+      color: var(--dk-fg-1);
+    }
+    .dk-meta {
+      font-size: var(--dk-text-sm);
+      font-weight: var(--dk-weight-medium);
+      color: var(--dk-fg-2);
+    }
+    .on-dark { color: var(--dk-white) !important; }
+    .on-dark-muted { color: rgba(255,255,255,0.65) !important; }
+
+    /* ============================================================
+       BUTTONS
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--dk-space-2);
+      font-family: var(--dk-font-sans);
+      font-size: var(--dk-text-md);
+      font-weight: var(--dk-weight-semibold);
+      line-height: 1;
+      border-radius: var(--dk-radius-pill);
+      border: none;
+      cursor: pointer;
+      transition: all var(--dk-dur-base) var(--dk-ease-out);
+      text-decoration: none;
+    }
+    .btn-lg { padding: 18px 36px; font-size: var(--dk-text-lg); }
+    .btn-md { padding: 14px 28px; }
+    .btn-sm { padding: 10px 20px; font-size: var(--dk-text-sm); }
+    .btn-primary {
+      background: var(--dk-brand);
+      color: var(--dk-fg-on-brand);
+      box-shadow: var(--dk-shadow-brand);
+    }
+    .btn-primary:hover {
+      background: var(--dk-brand-hover);
+      color: var(--dk-white);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(118,96,168,0.38);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--dk-brand);
+      border: 2px solid var(--dk-border-brand);
+    }
+    .btn-outline:hover {
+      background: var(--dk-brand-soft);
+      color: var(--dk-brand-hover);
+    }
+    .btn-outline-white {
+      background: transparent;
+      color: var(--dk-white);
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    .btn-outline-white:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.7);
+    }
+
+    /* ============================================================
+       CARDS
+       ============================================================ */
+    .card {
+      background: var(--dk-white);
+      border: 1px solid var(--dk-border);
+      border-radius: var(--dk-radius-lg);
+      padding: var(--dk-space-8);
+      box-shadow: var(--dk-shadow-sm);
+      transition: box-shadow var(--dk-dur-base) var(--dk-ease-out), transform var(--dk-dur-base) var(--dk-ease-out);
+    }
+    .card:hover {
+      box-shadow: var(--dk-shadow-md);
+      transform: translateY(-3px);
+    }
+    .card-tint {
+      background: var(--dk-bg-tint);
+      border-color: var(--dk-border-brand);
+    }
+
+    /* ============================================================
+       BADGES / TAGS
+       ============================================================ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--dk-text-xs);
+      font-weight: var(--dk-weight-semibold);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      border-radius: var(--dk-radius-pill);
+      padding: 5px 12px;
+    }
+    .badge-brand  { background: var(--dk-brand-soft);  color: var(--dk-brand); }
+    .badge-success { background: var(--dk-success-bg); color: var(--dk-success); }
+    .badge-info   { background: var(--dk-info-bg);    color: var(--dk-info); }
+    .badge-warn   { background: var(--dk-warning-bg); color: var(--dk-warning); }
+
+    /* ============================================================
+       DIVIDER
+       ============================================================ */
+    .divider { border: none; border-top: 1px solid var(--dk-border); margin: var(--dk-space-10) 0; }
+
+    /* ============================================================
+       PROGRESS BAR (funding)
+       ============================================================ */
+    .progress-wrap {
+      background: var(--dk-gray-200);
+      border-radius: var(--dk-radius-pill);
+      height: 10px;
+      overflow: hidden;
+      margin: var(--dk-space-3) 0;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: var(--dk-radius-pill);
+      background: linear-gradient(90deg, var(--dk-purple-700), var(--dk-purple-500));
+    }
+
+    /* ============================================================
+       NAV BAR
+       ============================================================ */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--dk-border);
+      padding: var(--dk-space-4) 0;
+    }
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--dk-space-6);
+    }
+    .navbar-logo {
+      font-size: var(--dk-text-xl);
+      font-weight: var(--dk-weight-bold);
+      color: var(--dk-brand);
+      display: flex;
+      align-items: center;
+      gap: var(--dk-space-2);
+    }
+    .navbar-logo svg { width: 28px; height: 28px; }
+    .navbar-links {
+      display: flex;
+      gap: var(--dk-space-6);
+      list-style: none;
+    }
+    .navbar-links a {
+      font-size: var(--dk-text-sm);
+      font-weight: var(--dk-weight-medium);
+      color: var(--dk-fg-1);
+    }
+    .navbar-links a:hover { color: var(--dk-brand); }
+    @media (max-width: 640px) { .navbar-links { display: none; } }
+
+    /* ============================================================
+       HERO SECTION
+       ============================================================ */
+    .hero {
+      background: linear-gradient(135deg, var(--dk-purple-50) 0%, var(--dk-white) 60%);
+      padding: var(--dk-space-24) 0 var(--dk-space-20);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -120px;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(118,96,168,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-layout {
+      display: flex;
+      align-items: center;
+      gap: var(--dk-space-16);
+    }
+    .hero-content { flex: 1; min-width: 0; }
+    .hero-visual { flex: 0 0 480px; }
+    .hero-eyebrow { margin-bottom: var(--dk-space-4); }
+    .hero-title { margin-bottom: var(--dk-space-6); }
+    .hero-lead { margin-bottom: var(--dk-space-8); max-width: 520px; }
+    .hero-cta { display: flex; gap: var(--dk-space-3); flex-wrap: wrap; margin-bottom: var(--dk-space-10); }
+    .hero-stats {
+      display: flex;
+      gap: var(--dk-space-8);
+      flex-wrap: wrap;
+    }
+    .stat-item { }
+    .stat-num {
+      font-size: var(--dk-text-3xl);
+      font-weight: var(--dk-weight-bold);
+      color: var(--dk-brand);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: var(--dk-text-xs);
+      font-weight: var(--dk-weight-medium);
+      letter-spacing: var(--dk-tracking-wide);
+      text-transform: uppercase;
+      color: var(--dk-fg-2);
+      margin-top: 4px;
+    }
+
+    /* ============================================================
+       WATCH SVG ILLUSTRATION
+       ============================================================ */
+    .watch-illustration {
+      width: 100%;
+      max-width: 340px;
+      margin: 0 auto;
+      filter: drop-shadow(0 24px 48px rgba(118,96,168,0.25));
+    }
+
+    /* ============================================================
+       FUNDING BOX
+       ============================================================ */
+    .funding-box {
+      background: var(--dk-white);
+      border: 1px solid var(--dk-border);
+      border-radius: var(--dk-radius-xl);
+      padding: var(--dk-space-8);
+      box-shadow: var(--dk-shadow-lg);
+      position: sticky;
+      top: 88px;
+    }
+    .funding-amount {
+      font-size: var(--dk-text-4xl);
+      font-weight: var(--dk-weight-bold);
+      color: var(--dk-brand);
+      line-height: 1;
+    }
+    .funding-goal { font-size: var(--dk-text-sm); color: var(--dk-fg-2); margin-top: 4px; }
+    .funding-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--dk-space-4);
+      margin-top: var(--dk-space-6);
+    }
+    .funding-meta-item { }
+    .funding-meta-num {
+      font-size: var(--dk-text-xl);
+      font-weight: var(--dk-weight-bold);
+      color: var(--dk-fg);
+    }
+    .funding-meta-label { font-size: var(--dk-text-xs); color: var(--dk-fg-2); text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* ============================================================
+       FEATURE ICONS
+       ============================================================ */
+    .icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--dk-radius-md);
+      background: var(--dk-brand-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--dk-space-4);
+      flex-shrink: 0;
+    }
+    .icon-circle svg { width: 28px; height: 28px; }
+    .icon-circle-lg {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--dk-radius-lg);
+    }
+    .icon-circle-lg svg { width: 36px; height: 36px; }
+
+    /* ============================================================
+       SPEC TABLE
+       ============================================================ */
+    .spec-table { width: 100%; border-collapse: collapse; }
+    .spec-table th {
+      text-align: left;
+      font-size: var(--dk-text-xs);
+      font-weight: var(--dk-weight-semibold);
+      letter-spacing: var(--dk-tracking-wide);
+      text-transform: uppercase;
+      color: var(--dk-fg-2);
+      padding: var(--dk-space-3) var(--dk-space-4);
+      border-bottom: 2px solid var(--dk-border);
+      background: var(--dk-bg-muted);
+    }
+    .spec-table td {
+      padding: var(--dk-space-4);
+      border-bottom: 1px solid var(--dk-border);
+      font-size: var(--dk-text-sm);
+      vertical-align: top;
+    }
+    .spec-table tr:last-child td { border-bottom: none; }
+    .spec-table tr:hover td { background: var(--dk-bg-tint); }
+    .spec-table .part-name { font-weight: var(--dk-weight-semibold); color: var(--dk-fg); }
+    .spec-table .part-desc { color: var(--dk-fg-2); font-size: var(--dk-text-xs); margin-top: 2px; }
+    .spec-table .part-cost { font-weight: var(--dk-weight-semibold); color: var(--dk-brand); white-space: nowrap; }
+    .spec-table tfoot td {
+      font-weight: var(--dk-weight-bold);
+      color: var(--dk-fg);
+      background: var(--dk-bg-tint);
+      border-top: 2px solid var(--dk-border-brand);
+    }
+
+    /* ============================================================
+       REWARD TIERS
+       ============================================================ */
+    .tier-card {
+      background: var(--dk-white);
+      border: 2px solid var(--dk-border);
+      border-radius: var(--dk-radius-xl);
+      padding: var(--dk-space-8);
+      position: relative;
+      transition: all var(--dk-dur-base) var(--dk-ease-out);
+    }
+    .tier-card:hover {
+      border-color: var(--dk-border-brand);
+      box-shadow: var(--dk-shadow-md);
+      transform: translateY(-4px);
+    }
+    .tier-card.featured {
+      border-color: var(--dk-brand);
+      box-shadow: var(--dk-shadow-brand);
+    }
+    .tier-card.featured .tier-badge {
+      display: inline-block;
+    }
+    .tier-badge {
+      display: none;
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dk-brand);
+      color: var(--dk-white);
+      font-size: var(--dk-text-xs);
+      font-weight: var(--dk-weight-bold);
+      letter-spacing: var(--dk-tracking-wide);
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: var(--dk-radius-pill);
+    }
+    .tier-name {
+      font-size: var(--dk-text-sm);
+      font-weight: var(--dk-weight-semibold);
+      letter-spacing: var(--dk-tracking-wide);
+      text-transform: uppercase;
+      color: var(--dk-fg-2);
+      margin-bottom: var(--dk-space-2);
+    }
+    .tier-price {
+      font-size: clamp(32px, 4vw, 44px);
+      font-weight: var(--dk-weight-bold);
+      color: var(--dk-brand);
+      line-height: 1;
+      margin-bottom: var(--dk-space-2);
+    }
+    .tier-desc { font-size: var(--dk-text-sm); color: var(--dk-fg-2); margin-bottom: var(--dk-space-6); }
+    .tier-perks { list-style: none; margin-bottom: var(--dk-space-6); }
+    .tier-perks li {
+      font-size: var(--dk-text-sm);
+      color: var(--dk-fg-1);
+      padding: var(--dk-space-2) 0;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--dk-space-2);
+      border-bottom: 1px solid var(--dk-border);
+    }
+    .tier-perks li:last-child { border-bottom: none; }
+    .perk-check {
+      color: var(--dk-success);
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .tier-slots { font-size: var(--dk-text-xs); color: var(--dk-fg-2); text-align: center; margin-top: var(--dk-space-3); }
+
+    /* ============================================================
+       TIMELINE
+       ============================================================ */
+    .timeline { position: relative; padding-left: 40px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--dk-brand) 0%, var(--dk-purple-200) 100%);
+    }
+    .timeline-item { position: relative; margin-bottom: var(--dk-space-8); }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-dot {
+      position: absolute;
+      left: -34px;
+      top: 6px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--dk-brand);
+      border: 3px solid var(--dk-white);
+      box-shadow: 0 0 0 2px var(--dk-brand);
+    }
+    .timeline-dot.future {
+      background: var(--dk-white);
+      box-shadow: 0 0 0 2px var(--dk-purple-300);
+    }
+    .timeline-date {
+      font-size: var(--dk-text-xs);
+      font-weight: var(--dk-weight-semibold);
+      letter-spacing: var(--dk-tracking-wide);
+      text-transform: uppercase;
+      color: var(--dk-brand);
+      margin-bottom: var(--dk-space-1);
+    }
+    .timeline-title {
+      font-size: var(--dk-text-lg);
+      font-weight: var(--dk-weight-semibold);
+      color: var(--dk-fg);
+      margin-bottom: var(--dk-space-2);
+    }
+    .timeline-body { font-size: var(--dk-text-sm); color: var(--dk-fg-2); }
+
+    /* ============================================================
+       FAQ ACCORDION (CSS-only)
+       ============================================================ */
+    .faq-item { border-bottom: 1px solid var(--dk-border); }
+    .faq-item:first-child { border-top: 1px solid var(--dk-border); }
+    .faq-trigger {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--dk-space-5) 0;
+      cursor: pointer;
+      list-style: none;
+      font-weight: var(--dk-weight-semibold);
+      color: var(--dk-fg);
+      gap: var(--dk-space-4);
+      user-select: none;
+    }
+    .faq-trigger::-webkit-details-marker { display: none; }
+    .faq-trigger::after {
+      content: '+';
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--dk-brand);
+      flex-shrink: 0;
+      transition: transform var(--dk-dur-base) var(--dk-ease-out);
+    }
+    details[open] .faq-trigger::after {
+      content: '−';
+    }
+    .faq-body {
+      font-size: var(--dk-text-md);
+      color: var(--dk-fg-2);
+      line-height: var(--dk-lh-relaxed);
+      padding-bottom: var(--dk-space-5);
+    }
+
+    /* ============================================================
+       COMPONENT CHIP
+       ============================================================ */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--dk-bg-muted);
+      border: 1px solid var(--dk-border);
+      border-radius: var(--dk-radius-sm);
+      padding: 4px 10px;
+      font-size: var(--dk-text-xs);
+      font-weight: var(--dk-weight-medium);
+      color: var(--dk-fg-1);
+    }
+
+    /* ============================================================
+       HOW IT WORKS STEPS
+       ============================================================ */
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--dk-brand);
+      color: var(--dk-white);
+      font-size: var(--dk-text-xl);
+      font-weight: var(--dk-weight-bold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-bottom: var(--dk-space-4);
+    }
+
+    /* ============================================================
+       TRUST BAR
+       ============================================================ */
+    .trust-bar {
+      border-top: 1px solid var(--dk-border);
+      border-bottom: 1px solid var(--dk-border);
+      background: var(--dk-bg-muted);
+      padding: var(--dk-space-6) 0;
+    }
+    .trust-items {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--dk-space-10);
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: var(--dk-space-2);
+      font-size: var(--dk-text-sm);
+      font-weight: var(--dk-weight-medium);
+      color: var(--dk-fg-1);
+    }
+    .trust-item svg { color: var(--dk-brand); }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    footer {
+      background: var(--dk-bg-inverse);
+      color: rgba(255,255,255,0.6);
+      padding: var(--dk-space-12) 0;
+      font-size: var(--dk-text-sm);
+      text-align: center;
+    }
+    footer a { color: var(--dk-purple-300); }
+
+    /* ============================================================
+       SECTION HEADERS
+       ============================================================ */
+    .section-header { margin-bottom: var(--dk-space-12); }
+    .section-header.text-center .dk-h2 { max-width: 640px; margin-left: auto; margin-right: auto; }
+    .section-header .dk-eyebrow { margin-bottom: var(--dk-space-3); }
+    .section-header .dk-h2 { margin-bottom: var(--dk-space-4); }
+    .section-header .dk-lead { max-width: 600px; }
+    .section-header.text-center .dk-lead { margin-left: auto; margin-right: auto; }
+
+    /* ============================================================
+       QUOTE BLOCK
+       ============================================================ */
+    .quote {
+      border-left: 4px solid var(--dk-brand);
+      padding: var(--dk-space-5) var(--dk-space-8);
+      background: var(--dk-bg-tint);
+      border-radius: 0 var(--dk-radius-md) var(--dk-radius-md) 0;
+      font-size: var(--dk-text-lg);
+      font-style: italic;
+      color: var(--dk-fg);
+      margin: var(--dk-space-8) 0;
+    }
+
+    /* ============================================================
+       CAMPAIGN LAYOUT (2 col w/ sidebar)
+       ============================================================ */
+    .campaign-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: var(--dk-space-12);
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .campaign-layout { grid-template-columns: 1fr; }
+      .funding-box { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="#" class="navbar-logo">
+        <svg viewBox="0 0 28 28" fill="none">
+          <rect x="6" y="2" width="16" height="24" rx="5" fill="#7660A8"/>
+          <rect x="9" y="6" width="10" height="10" rx="2" fill="white" opacity="0.9"/>
+          <circle cx="14" cy="20" r="2" fill="white" opacity="0.7"/>
+          <rect x="4" y="8" width="3" height="5" rx="1.5" fill="#9384BD"/>
+          <rect x="21" y="8" width="3" height="5" rx="1.5" fill="#9384BD"/>
+          <rect x="9" y="26" width="4" height="3" rx="1" fill="#5C4A8E"/>
+          <rect x="15" y="26" width="4" height="3" rx="1" fill="#5C4A8E"/>
+          <rect x="9" y="−1" width="4" height="3" rx="1" fill="#5C4A8E" transform="translate(0 -2)"/>
+          <rect x="15" y="−1" width="4" height="3" rx="1" fill="#5C4A8E" transform="translate(0 -2)"/>
+          <line x1="11" y1="9" x2="11" y2="13" stroke="#7660A8" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="14" y1="9" x2="14" y2="14" stroke="#7660A8" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="17" y1="9" x2="17" y2="12" stroke="#7660A8" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        KidTrack
+      </a>
+      <ul class="navbar-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#specs">Tech</a></li>
+        <li><a href="#rewards">Rewards</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <a href="#rewards" class="btn btn-primary btn-sm">Back This Project</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero" id="about">
+  <div class="container">
+    <div class="hero-layout">
+
+      <div class="hero-content">
+        <p class="dk-eyebrow hero-eyebrow">Open Hardware &nbsp;·&nbsp; Child Safety Wearable</p>
+        <h1 class="dk-h1 hero-title">
+          Know where<br>
+          your toddler<br>
+          <span style="color: var(--dk-brand);">is. Always.</span>
+        </h1>
+        <p class="dk-lead hero-lead">
+          KidTrack is a tiny, open-source wearable watch for children 1 and up.
+          Real-time GPS location, activity tracking, and sleep monitoring — all in a
+          child-safe enclosure smaller than a matchbox.
+        </p>
+        <div class="hero-cta">
+          <a href="#rewards" class="btn btn-primary btn-lg">Back This Project</a>
+          <a href="#features" class="btn btn-outline btn-lg">See How It Works</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-num">40mm</div>
+            <div class="stat-label">Enclosure size</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">500mAh</div>
+            <div class="stat-label">Battery capacity</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">GPS+BLE</div>
+            <div class="stat-label">Connectivity</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">Open</div>
+            <div class="stat-label">Source hardware</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Video -->
+      <div class="hero-visual">
+        <div style="border-radius: var(--dk-radius-2xl); overflow: hidden; box-shadow: var(--dk-shadow-brand), 0 0 0 1px rgba(118,96,168,0.2);">
+          <video
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+            style="display: block; width: 100%; height: auto; background: #0F0F12;"
+          >
+            <source src="Create_a_highly_realistic_comm.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TRUST BAR
+     ============================================================ -->
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-items">
+      <div class="trust-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Child-safe PETG enclosure
+      </div>
+      <div class="trust-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Real-time GPS updates
+      </div>
+      <div class="trust-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.015 4.19 2 2 0 012.18 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 9.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        BLE parent app sync
+      </div>
+      <div class="trust-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Activity &amp; sleep tracking
+      </div>
+      <div class="trust-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0M4.93 19.07a10 10 0 0 0 14.14 0"/><path d="M16.24 7.76a6 6 0 0 0-8.49 0M7.76 16.24a6 6 0 0 0 8.49 0"/></svg>
+        Open-source firmware
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CAMPAIGN MAIN CONTENT + SIDEBAR
+     ============================================================ -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="campaign-layout">
+
+      <!-- Main content column -->
+      <div>
+
+        <!-- THE PROBLEM -->
+        <div style="margin-bottom: var(--dk-space-16);">
+          <p class="dk-eyebrow" style="margin-bottom: var(--dk-space-3);">Why We Built This</p>
+          <h2 class="dk-h3" style="margin-bottom: var(--dk-space-5);">Toddlers move fast. Peace of mind shouldn't cost a subscription.</h2>
+          <p class="dk-body" style="margin-bottom: var(--dk-space-5);">
+            Every parent of a toddler knows the feeling — you look away for two seconds and they've vanished around a corner.
+            Existing trackers are either locked behind expensive monthly plans, packed with bloatware,
+            or designed for older kids. None of them are open, hackable, or truly built for the 1–4 year age group.
+          </p>
+          <div class="quote">
+            "I wanted to know when my 18-month-old fell asleep, how long he napped, and whether he was still in the backyard.
+            Nothing on the market did all three without a monthly fee."
+          </div>
+          <p class="dk-body">
+            KidTrack is our answer: a fully open-source, DIY-friendly wearable that gives you GPS location,
+            motion-based activity detection, and sleep monitoring — all synced to your phone via Bluetooth, zero subscription required.
+          </p>
+        </div>
+
+        <!-- FEATURES -->
+        <div style="margin-bottom: var(--dk-space-16);">
+          <p class="dk-eyebrow" style="margin-bottom: var(--dk-space-3);">Core Features</p>
+          <h2 class="dk-h3" style="margin-bottom: var(--dk-space-8);">Everything a parent needs, nothing you don't.</h2>
+
+          <div class="grid-2" style="gap: var(--dk-space-5);">
+
+            <div class="card card-tint">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <h3 class="dk-h5" style="margin-bottom: var(--dk-space-2);">Real-time GPS Location</h3>
+              <p class="dk-body">Powered by the Adafruit Ultimate GPS MAX-M8Q module. Know exactly where your child is, updated every few seconds.</p>
+              <div style="margin-top: var(--dk-space-3); display: flex; gap: var(--dk-space-2); flex-wrap: wrap;">
+                <span class="chip">MAX-M8Q GPS</span>
+                <span class="chip">NMEA protocol</span>
+                <span class="chip">1–2m accuracy</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <h3 class="dk-h5" style="margin-bottom: var(--dk-space-2);">Activity Monitoring</h3>
+              <p class="dk-body">A 6-axis IMU (accelerometer + gyroscope) tracks time in motion, step-equivalent counts, and physical activity levels throughout the day.</p>
+              <div style="margin-top: var(--dk-space-3); display: flex; gap: var(--dk-space-2); flex-wrap: wrap;">
+                <span class="chip">LSM6DS3TR-C IMU</span>
+                <span class="chip">6-axis</span>
+                <span class="chip">I²C bus</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
+              </div>
+              <h3 class="dk-h5" style="margin-bottom: var(--dk-space-2);">Sleep Detection</h3>
+              <p class="dk-body">Motion analysis automatically detects when your child falls asleep, how long they sleep, and when they wake — no button pressing required.</p>
+              <div style="margin-top: var(--dk-space-3); display: flex; gap: var(--dk-space-2); flex-wrap: wrap;">
+                <span class="chip">Auto-detect</span>
+                <span class="chip">Nap logging</span>
+                <span class="chip">Wake alerts</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.015 4.19 2 2 0 012.18 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 9.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              </div>
+              <h3 class="dk-h5" style="margin-bottom: var(--dk-space-2);">Bluetooth Parent Sync</h3>
+              <p class="dk-body">The nRF52840's integrated BLE broadcasts data to your phone in real time. Open API — build your own companion app or use ours.</p>
+              <div style="margin-top: var(--dk-space-3); display: flex; gap: var(--dk-space-2); flex-wrap: wrap;">
+                <span class="chip">BLE 5.0</span>
+                <span class="chip">nRF52840</span>
+                <span class="chip">Open API</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+              </div>
+              <h3 class="dk-h5" style="margin-bottom: var(--dk-space-2);">USB-C Charging</h3>
+              <p class="dk-body">Standard USB-C port charges the 500mAh LiPo battery. No proprietary cables. Estimated 1–2 days of runtime per charge depending on GPS update interval.</p>
+              <div style="margin-top: var(--dk-space-3); display: flex; gap: var(--dk-space-2); flex-wrap: wrap;">
+                <span class="chip">USB-C</span>
+                <span class="chip">500mAh LiPo</span>
+                <span class="chip">~36hr runtime</span>
+              </div>
+            </div>
+
+            <div class="card card-tint">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3 class="dk-h5" style="margin-bottom: var(--dk-space-2);">Child-Safe Design</h3>
+              <p class="dk-body">PETG 3D-printed enclosure with rounded edges, M2 tamper-resistant screws, and an adjustable silicone strap rated for wrist or ankle wear on toddlers.</p>
+              <div style="margin-top: var(--dk-space-3); display: flex; gap: var(--dk-space-2); flex-wrap: wrap;">
+                <span class="chip">PETG enclosure</span>
+                <span class="chip">40×40×15 mm</span>
+                <span class="chip">Silicone strap</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- HOW IT WORKS -->
+        <div style="margin-bottom: var(--dk-space-16);">
+          <p class="dk-eyebrow" style="margin-bottom: var(--dk-space-3);">How It Works</p>
+          <h2 class="dk-h3" style="margin-bottom: var(--dk-space-8);">Four systems working together.</h2>
+
+          <div style="display: flex; flex-direction: column; gap: var(--dk-space-6);">
+            <div style="display: flex; gap: var(--dk-space-6); align-items: flex-start;">
+              <div class="step-num">1</div>
+              <div>
+                <h4 class="dk-h5" style="margin-bottom: var(--dk-space-2);">GPS tracks location</h4>
+                <p class="dk-body">The MAX-M8Q GPS module receives satellite signals and sends NMEA position sentences to the nRF52840 over UART at configurable intervals. Even indoors, the low-power GPS maintains a last-known fix.</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--dk-space-6); align-items: flex-start;">
+              <div class="step-num">2</div>
+              <div>
+                <h4 class="dk-h5" style="margin-bottom: var(--dk-space-2);">IMU detects motion &amp; sleep</h4>
+                <p class="dk-body">The LSM6DS3TR-C 6-axis IMU streams accelerometer and gyroscope data at up to 416Hz over I²C. Firmware classifies motion patterns: active play, walking, stillness, and sleep — no cloud processing needed, all on-device.</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--dk-space-6); align-items: flex-start;">
+              <div class="step-num">3</div>
+              <div>
+                <h4 class="dk-h5" style="margin-bottom: var(--dk-space-2);">BLE broadcasts to your phone</h4>
+                <p class="dk-body">The nRF52840 advertises a BLE GATT service with characteristic UUIDs for location, activity state, battery level, and sleep log. Any BLE-capable phone can connect. The open specification lets you build custom dashboards or automations.</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--dk-space-6); align-items: flex-start;">
+              <div class="step-num">4</div>
+              <div>
+                <h4 class="dk-h5" style="margin-bottom: var(--dk-space-2);">Battery &amp; charging management</h4>
+                <p class="dk-body">The 500mAh 3.7V LiPo plugs directly into the nRF52840's onboard JST connector. The USB-C breakout handles 5V input; the MCU's built-in charger circuit handles the LiPo. Battery percentage is monitored on the A0 analog pin and surfaced over BLE.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TECH SPECS TABLE -->
+        <div id="specs" style="margin-bottom: var(--dk-space-16);">
+          <p class="dk-eyebrow" style="margin-bottom: var(--dk-space-3);">Bill of Materials</p>
+          <h2 class="dk-h3" style="margin-bottom: var(--dk-space-2);">Every component, no surprises.</h2>
+          <p class="dk-body" style="margin-bottom: var(--dk-space-6);">KidTrack is fully open hardware. Here's exactly what's inside each unit, with real sourcing costs.</p>
+
+          <div style="overflow-x: auto; border: 1px solid var(--dk-border); border-radius: var(--dk-radius-lg); overflow: hidden;">
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Part</th>
+                  <th>Role</th>
+                  <th style="text-align:right;">Unit Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="part-name">Main Controller</div>
+                    <div class="part-desc">MCU · Electrical</div>
+                  </td>
+                  <td><a href="https://www.adafruit.com/product/4062" target="_blank" rel="noopener">Adafruit Feather nRF52840 Express</a></td>
+                  <td>BLE 5.0, ARM Cortex-M4, 51×23×7mm, 3.3V logic, built-in LiPo charger</td>
+                  <td class="part-cost" style="text-align:right;">$24.95</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="part-name">GPS Module</div>
+                    <div class="part-desc">Module · Electrical</div>
+                  </td>
+                  <td><a href="https://www.adafruit.com/product/4415" target="_blank" rel="noopener">Adafruit Ultimate GPS Breakout MAX-M8Q</a></td>
+                  <td>u-blox MAX-M8Q, UART NMEA, 25×20×7mm, 1–2m CEP accuracy</td>
+                  <td class="part-cost" style="text-align:right;">$44.95</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="part-name">Motion Sensor</div>
+                    <div class="part-desc">Sensor · Electrical</div>
+                  </td>
+                  <td><a href="https://www.adafruit.com/product/4503" target="_blank" rel="noopener">LSM6DS3TR-C IMU Breakout</a></td>
+                  <td>6-axis accel/gyro, I²C, INT1 wake-on-motion, 20×15×3mm</td>
+                  <td class="part-cost" style="text-align:right;">$8.95</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="part-name">Battery</div>
+                    <div class="part-desc">Power · Electrical</div>
+                  </td>
+                  <td><a href="https://www.adafruit.com/product/1578" target="_blank" rel="noopener">LiPo Battery 3.7V 500mAh</a></td>
+                  <td>JST PH connector, 45×25×5mm, rechargeable</td>
+                  <td class="part-cost" style="text-align:right;">$9.95</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="part-name">USB-C Port</div>
+                    <div class="part-desc">Module · Electrical</div>
+                  </td>
+                  <td><a href="https://www.adafruit.com/product/6050" target="_blank" rel="noopener">USB 2.0 Type-C Breakout Board</a></td>
+                  <td>5V VBUS input, 15×10×4mm, OTG capable</td>
+                  <td class="part-cost" style="text-align:right;">$3.50</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="part-name">Enclosure</div>
+                    <div class="part-desc">3D Printed · Mechanical</div>
+                  </td>
+                  <td>Custom PETG — Body + Lid</td>
+                  <td>40×40×15mm body, rounded edges, child-safe, splash-resistant, M2 heat-set locking</td>
+                  <td class="part-cost" style="text-align:right;">$3.50</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="part-name">Wearable Strap</div>
+                    <div class="part-desc">Misc · Mechanical</div>
+                  </td>
+                  <td>Adjustable Silicone Watch Band</td>
+                  <td>20×220×2mm, non-irritating, child-resistant buckle, wrist or ankle</td>
+                  <td class="part-cost" style="text-align:right;">$8.00</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="part-name">Hardware</div>
+                    <div class="part-desc">Misc · Mechanical</div>
+                  </td>
+                  <td>M2×6mm Screws (×4) + M2 Heat-Set Inserts (×4)</td>
+                  <td>Tamper-resistant lid fastening system</td>
+                  <td class="part-cost" style="text-align:right;">$1.00</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" style="font-weight: 700; color: var(--dk-fg);">Total Parts Cost (per unit)</td>
+                  <td class="part-cost" style="text-align:right; font-size: var(--dk-text-lg);">~$104.80</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <p class="dk-meta" style="margin-top: var(--dk-space-4);">
+            All costs are retail/breakout-board prices. Volume pricing on a funded campaign will reduce BOM cost significantly.
+            Full schematics, STL files, and firmware are released under MIT License on GitHub.
+          </p>
+        </div>
+
+        <!-- OPEN SOURCE -->
+        <div style="margin-bottom: var(--dk-space-16); background: var(--dk-bg-inverse); border-radius: var(--dk-radius-2xl); padding: var(--dk-space-10);">
+          <p class="dk-eyebrow on-dark" style="margin-bottom: var(--dk-space-3);">Open Hardware</p>
+          <h2 class="dk-h3 on-dark" style="margin-bottom: var(--dk-space-5);">Everything is yours.</h2>
+          <p class="dk-lead on-dark-muted" style="margin-bottom: var(--dk-space-8); font-size: var(--dk-text-lg);">
+            KidTrack ships with full design files, firmware, and BLE specs under the MIT License.
+            Fork it, improve it, build a companion app — no permission needed.
+          </p>
+          <div class="grid-3">
+            <div>
+              <p class="dk-eyebrow" style="color: var(--dk-purple-300); margin-bottom: var(--dk-space-2);">Firmware</p>
+              <p style="color: rgba(255,255,255,0.65); font-size: var(--dk-text-sm);">Arduino / PlatformIO (C/C++) for nRF52840. GPS parsing, IMU state machine, BLE GATT server.</p>
+            </div>
+            <div>
+              <p class="dk-eyebrow" style="color: var(--dk-purple-300); margin-bottom: var(--dk-space-2);">Hardware Files</p>
+              <p style="color: rgba(255,255,255,0.65); font-size: var(--dk-text-sm);">All PETG STL models, wiring diagrams, electrical connection JSON, and parts CSV.</p>
+            </div>
+            <div>
+              <p class="dk-eyebrow" style="color: var(--dk-purple-300); margin-bottom: var(--dk-space-2);">BLE Spec</p>
+              <p style="color: rgba(255,255,255,0.65); font-size: var(--dk-text-sm);">Documented GATT service with characteristic UUIDs for all sensor data. Build iOS, Android, or web apps.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <div style="margin-bottom: var(--dk-space-16);">
+          <p class="dk-eyebrow" style="margin-bottom: var(--dk-space-3);">Roadmap</p>
+          <h2 class="dk-h3" style="margin-bottom: var(--dk-space-8);">From prototype to your hands.</h2>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-date">Now — Kickstarter Live</div>
+              <div class="timeline-title">Campaign &amp; community building</div>
+              <div class="timeline-body">Sharing the open design, collecting backer feedback, finalizing enclosure ergonomics based on parent input.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot future"></div>
+              <div class="timeline-date">Month 1–2</div>
+              <div class="timeline-title">Firmware &amp; firmware hardening</div>
+              <div class="timeline-body">Sleep detection algorithm tuning. BLE GATT service finalized. Reference companion app (React Native) development begins.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot future"></div>
+              <div class="timeline-date">Month 3</div>
+              <div class="timeline-title">Beta kits to early backers</div>
+              <div class="timeline-body">50 DIY kit pre-production units ship to Blueprint Backers. Community assembles, files bugs, improves the enclosure. All feedback goes into a v1.1 revision.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot future"></div>
+              <div class="timeline-date">Month 4–5</div>
+              <div class="timeline-title">Full production run</div>
+              <div class="timeline-body">Parts ordered at volume. Enclosure injection-mold or SLS at scale (depending on stretch goals). Fully assembled units production-tested.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot future"></div>
+              <div class="timeline-date">Month 6</div>
+              <div class="timeline-title">All rewards shipped</div>
+              <div class="timeline-body">Every backer receives their unit. GitHub repository tagged v1.0. Companion app published on iOS &amp; Android. Community forum launched.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /main col -->
+
+      <!-- SIDEBAR (funding box + quick facts) -->
+      <div>
+        <div class="funding-box">
+          <div class="badge badge-success" style="margin-bottom: var(--dk-space-4);">
+            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#2E8B57"/></svg>
+            Campaign Live
+          </div>
+          <div class="funding-amount">$8,420</div>
+          <div class="funding-goal">pledged of $15,000 goal</div>
+
+          <div class="progress-wrap" style="margin: var(--dk-space-4) 0;">
+            <div class="progress-fill" style="width: 56%;"></div>
+          </div>
+
+          <div class="funding-meta">
+            <div class="funding-meta-item">
+              <div class="funding-meta-num">147</div>
+              <div class="funding-meta-label">Backers</div>
+            </div>
+            <div class="funding-meta-item">
+              <div class="funding-meta-num">21</div>
+              <div class="funding-meta-label">Days left</div>
+            </div>
+          </div>
+
+          <a href="#rewards" class="btn btn-primary btn-md" style="width: 100%; justify-content: center; margin-top: var(--dk-space-6);">Back This Project</a>
+
+          <div style="margin-top: var(--dk-space-5); padding-top: var(--dk-space-5); border-top: 1px solid var(--dk-border);">
+            <p class="dk-meta" style="margin-bottom: var(--dk-space-3);">All-or-nothing campaign. No charge if goal isn't reached.</p>
+            <div style="display: flex; flex-direction: column; gap: var(--dk-space-2);">
+              <div class="trust-item" style="font-size: var(--dk-text-xs);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E8B57" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Full refund if goal not met
+              </div>
+              <div class="trust-item" style="font-size: var(--dk-text-xs);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E8B57" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                MIT open-source license
+              </div>
+              <div class="trust-item" style="font-size: var(--dk-text-xs);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E8B57" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                No monthly subscription fees
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick spec card -->
+        <div class="card" style="margin-top: var(--dk-space-6);">
+          <p class="dk-eyebrow" style="margin-bottom: var(--dk-space-4);">Quick Specs</p>
+          <div style="display: flex; flex-direction: column; gap: var(--dk-space-3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--dk-space-3); border-bottom: 1px solid var(--dk-border);">
+              <span class="dk-meta">MCU</span>
+              <span style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">nRF52840 + BLE 5.0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--dk-space-3); border-bottom: 1px solid var(--dk-border);">
+              <span class="dk-meta">GPS</span>
+              <span style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">u-blox MAX-M8Q</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--dk-space-3); border-bottom: 1px solid var(--dk-border);">
+              <span class="dk-meta">IMU</span>
+              <span style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">LSM6DS3TR-C 6-axis</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--dk-space-3); border-bottom: 1px solid var(--dk-border);">
+              <span class="dk-meta">Battery</span>
+              <span style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">3.7V / 500mAh LiPo</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--dk-space-3); border-bottom: 1px solid var(--dk-border);">
+              <span class="dk-meta">Charging</span>
+              <span style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">USB-C (5V)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--dk-space-3); border-bottom: 1px solid var(--dk-border);">
+              <span class="dk-meta">Enclosure</span>
+              <span style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">PETG 40×40×15mm</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: var(--dk-space-3); border-bottom: 1px solid var(--dk-border);">
+              <span class="dk-meta">Strap</span>
+              <span style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">Silicone, adjustable</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="dk-meta">Target age</span>
+              <span style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">1+ years</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stretch goals -->
+        <div class="card card-tint" style="margin-top: var(--dk-space-6);">
+          <p class="dk-eyebrow" style="margin-bottom: var(--dk-space-4);">Stretch Goals</p>
+          <div style="display: flex; flex-direction: column; gap: var(--dk-space-3);">
+            <div style="display: flex; align-items: flex-start; gap: var(--dk-space-3);">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--dk-success); flex-shrink: 0; margin-top: 6px;"></div>
+              <div>
+                <p style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">$15k — Base goal</p>
+                <p class="dk-meta">DIY kits + firmware shipped</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: var(--dk-space-3);">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--dk-border-strong); flex-shrink: 0; margin-top: 6px;"></div>
+              <div>
+                <p style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">$25k — Companion app</p>
+                <p class="dk-meta">Native iOS + Android app with map view, alerts, and sleep history</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: var(--dk-space-3);">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--dk-border-strong); flex-shrink: 0; margin-top: 6px;"></div>
+              <div>
+                <p style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">$40k — Injection-mold enclosure</p>
+                <p class="dk-meta">Professional-grade housing replaces 3D print for durability and finish</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: var(--dk-space-3);">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--dk-border-strong); flex-shrink: 0; margin-top: 6px;"></div>
+              <div>
+                <p style="font-size: var(--dk-text-sm); font-weight: 600; color: var(--dk-fg);">$60k — Cellular LTE-M version</p>
+                <p class="dk-meta">Works beyond Bluetooth range via LTE-M, no Wi-Fi dependency</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /sidebar -->
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     REWARD TIERS
+     ============================================================ -->
+<section class="section section-alt" id="rewards">
+  <div class="container">
+    <div class="section-header text-center">
+      <p class="dk-eyebrow">Pledge Tiers</p>
+      <h2 class="dk-h2">Choose your reward</h2>
+      <p class="dk-lead">Whether you want to build it yourself or receive it ready-to-wear, there's a tier for you.</p>
+    </div>
+
+    <div class="grid-3" style="align-items: start;">
+
+      <!-- Tier 1: Blueprint -->
+      <div class="tier-card">
+        <div class="tier-name">Blueprint</div>
+        <div class="tier-price">$25</div>
+        <div class="tier-desc">All the files, none of the hardware.</div>
+        <ul class="tier-perks">
+          <li><span class="perk-check">✓</span> Complete STL files for 3D printing</li>
+          <li><span class="perk-check">✓</span> Full firmware source (MIT License)</li>
+          <li><span class="perk-check">✓</span> Wiring diagrams &amp; electrical connections</li>
+          <li><span class="perk-check">✓</span> Parts BOM with sourcing links</li>
+          <li><span class="perk-check">✓</span> BLE GATT spec document</li>
+          <li><span class="perk-check">✓</span> Backer Discord community</li>
+        </ul>
+        <a href="#" class="btn btn-outline btn-md" style="width: 100%; justify-content: center;">Pledge $25</a>
+        <div class="tier-slots">Unlimited &nbsp;·&nbsp; Digital delivery</div>
+      </div>
+
+      <!-- Tier 2: DIY Kit (Featured) -->
+      <div class="tier-card featured">
+        <div class="tier-badge">Most Popular</div>
+        <div class="tier-name">DIY Kit</div>
+        <div class="tier-price">$89</div>
+        <div class="tier-desc">Everything you need to assemble KidTrack yourself.</div>
+        <ul class="tier-perks">
+          <li><span class="perk-check">✓</span> Everything in Blueprint tier</li>
+          <li><span class="perk-check">✓</span> All electronic components (MCU, GPS, IMU, battery, USB-C)</li>
+          <li><span class="perk-check">✓</span> Pre-printed PETG enclosure + lid</li>
+          <li><span class="perk-check">✓</span> Silicone strap + M2 screws &amp; inserts</li>
+          <li><span class="perk-check">✓</span> Printed assembly guide</li>
+          <li><span class="perk-check">✓</span> Pre-flashed firmware on MCU</li>
+        </ul>
+        <a href="#" class="btn btn-primary btn-md" style="width: 100%; justify-content: center;">Pledge $89</a>
+        <div class="tier-slots">Limited to 200 units</div>
+      </div>
+
+      <!-- Tier 3: Ready-to-Wear -->
+      <div class="tier-card">
+        <div class="tier-name">Ready-to-Wear</div>
+        <div class="tier-price">$149</div>
+        <div class="tier-desc">Fully assembled, tested, and ready to strap on.</div>
+        <ul class="tier-perks">
+          <li><span class="perk-check">✓</span> Everything in DIY Kit tier</li>
+          <li><span class="perk-check">✓</span> Factory-assembled &amp; soldered unit</li>
+          <li><span class="perk-check">✓</span> Functional test report included</li>
+          <li><span class="perk-check">✓</span> USB-C cable included</li>
+          <li><span class="perk-check">✓</span> 6-month hardware warranty</li>
+          <li><span class="perk-check">✓</span> Priority supporter badge on GitHub</li>
+        </ul>
+        <a href="#" class="btn btn-outline btn-md" style="width: 100%; justify-content: center;">Pledge $149</a>
+        <div class="tier-slots">Limited to 100 units</div>
+      </div>
+
+    </div>
+
+    <p class="dk-meta text-center" style="margin-top: var(--dk-space-8);">
+      Shipping estimated at $6–$14 depending on location, calculated at checkout. Kits ship worldwide.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ
+     ============================================================ -->
+<section class="section" id="faq">
+  <div class="container" style="max-width: 720px;">
+    <div class="section-header text-center">
+      <p class="dk-eyebrow">Frequently Asked Questions</p>
+      <h2 class="dk-h2">Got questions?</h2>
+    </div>
+
+    <details class="faq-item">
+      <summary class="faq-trigger">What age range is KidTrack designed for?</summary>
+      <div class="faq-body">
+        KidTrack was designed from the ground up for toddlers 1 year and older. The enclosure size (40×40×15mm) and the
+        adjustable silicone strap fit wrists and ankles in the 10–16cm circumference range typical for ages 1–5.
+        For older children, the longer 20×220mm strap fits wrists up to 18cm comfortably.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-trigger">Does it require a monthly subscription or internet connection?</summary>
+      <div class="faq-body">
+        No subscription, ever. KidTrack syncs data to your phone over Bluetooth Low Energy — no server, no cloud,
+        no ongoing cost. The GPS module receives satellite signals directly; no cellular plan is needed.
+        The only connectivity requirement is that your phone is within BLE range (~10–30 meters) to receive live data.
+        If it goes out of range, the device logs data locally and syncs when reconnected.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-trigger">How accurate is the GPS tracking?</summary>
+      <div class="faq-body">
+        The u-blox MAX-M8Q provides 1–2 meter CEP accuracy in open-sky conditions, which is excellent for
+        outdoor tracking in parks, backyards, and playgrounds. Indoor accuracy degrades as GPS signals
+        cannot penetrate ceilings; in those cases the device maintains a last-known fix and uses IMU
+        dead-reckoning to estimate position until satellite lock is reacquired.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-trigger">How long does the battery last?</summary>
+      <div class="faq-body">
+        Runtime depends heavily on GPS polling interval. At the default setting (position fix every 5 seconds),
+        expect approximately 18–24 hours. Reducing GPS to once-per-30-seconds extends runtime to 3–4 days.
+        The battery percentage is always visible via BLE and will trigger a low-battery alert at 20%.
+        Charging from empty to full via USB-C takes roughly 2 hours.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-trigger">Is the enclosure waterproof?</summary>
+      <div class="faq-body">
+        The PETG enclosure with M2 screw-fastened lid provides splash resistance suitable for rain and
+        hand-washing. It is not rated for submersion. The current design does not include a gasket seal;
+        a stretch goal improvement adds a silicone O-ring to the lid for IPX4 splash resistance.
+        Avoid submerging the device in water or leaving it in puddles.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-trigger">Do I need to know how to code to use KidTrack?</summary>
+      <div class="faq-body">
+        For the <strong>Ready-to-Wear</strong> tier: no. The MCU ships pre-flashed and the BLE GATT server
+        is live out of the box. Any BLE scanner app can read the data immediately.
+        A reference companion app (iOS/Android) is a stretch goal at $25k.
+        For the <strong>DIY Kit</strong> and <strong>Blueprint</strong> tiers, you'll need basic Arduino/PlatformIO
+        experience to compile and flash firmware — full documentation and step-by-step guides are included.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-trigger">What tools do I need to build the DIY kit?</summary>
+      <div class="faq-body">
+        You'll need: a soldering iron with a fine tip, solder, wire strippers, flush cutters, a multimeter,
+        an M2 screwdriver, and a heat gun (or lighter) for the heat-set inserts. The 3D-printed enclosure
+        comes pre-printed — no 3D printer required for the kit tier. You'll also need a computer with
+        Arduino IDE or PlatformIO installed for the initial firmware flash.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-trigger">Is this safe for children — are the materials tested?</summary>
+      <div class="faq-body">
+        PETG (the enclosure material) is food-safe and BPA-free, widely used in medical device housings.
+        The silicone strap is hypoallergenic and non-irritating. The M2 screws are internal and
+        inaccessible to small hands. KidTrack uses Bluetooth Low Energy (BLE), which emits
+        far less RF radiation than a typical smartphone (SAR &lt; 0.1 W/kg). The device is not
+        CE/FCC certified in this Kickstarter form — certification is a stretch goal.
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     FINAL CTA
+     ============================================================ -->
+<section style="background: linear-gradient(135deg, var(--dk-purple-800) 0%, var(--dk-purple-900) 100%); padding: var(--dk-space-20) 0; text-align: center;">
+  <div class="container" style="max-width: 640px;">
+    <p class="dk-eyebrow" style="color: var(--dk-purple-300); margin-bottom: var(--dk-space-4);">Join 147 backers</p>
+    <h2 class="dk-h2 on-dark" style="margin-bottom: var(--dk-space-5);">Help us bring KidTrack to every parent.</h2>
+    <p class="dk-lead on-dark-muted" style="margin-bottom: var(--dk-space-8);">
+      21 days left on the campaign. Back today and be among the first to build — or receive — a KidTrack.
+    </p>
+    <div style="display: flex; gap: var(--dk-space-4); justify-content: center; flex-wrap: wrap;">
+      <a href="#rewards" class="btn btn-primary btn-lg">Back This Project</a>
+      <a href="#faq" class="btn btn-outline-white btn-lg">Read the FAQ</a>
+    </div>
+    <p class="dk-meta" style="color: rgba(255,255,255,0.4); margin-top: var(--dk-space-6);">
+      All-or-nothing campaign &nbsp;·&nbsp; No charge if goal isn't met &nbsp;·&nbsp; MIT open-source license
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <div class="container">
+    <p style="font-weight: 600; font-size: var(--dk-text-md); color: var(--dk-white); margin-bottom: var(--dk-space-3);">KidTrack &mdash; Open Hardware Toddler Safety Watch</p>
+    <p style="margin-bottom: var(--dk-space-3);">
+      Designed with <a href="https://blueprint.am" target="_blank" rel="noopener">Blueprint.am</a> AI Hardware Design &nbsp;·&nbsp;
+      Hardware files &amp; firmware MIT Licensed &nbsp;·&nbsp;
+      <a href="#faq">FAQ</a> &nbsp;·&nbsp; <a href="#rewards">Pledge</a>
+    </p>
+    <p>KidTrack is a crowdfunding project. Renders are illustrative; final product may vary slightly. Not yet CE/FCC certified.</p>
+  </div>
+</footer>
+
+</body>
+</html>
