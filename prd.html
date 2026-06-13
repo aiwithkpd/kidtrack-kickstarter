@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KidTrack App — Product Requirements Document</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --dk-purple-900: #4A3878;
+      --dk-purple-800: #5C4A8E;
+      --dk-purple-700: #7660A8;
+      --dk-purple-600: #8773B5;
+      --dk-purple-500: #9384BD;
+      --dk-purple-400: #B0A4CE;
+      --dk-purple-300: #C9C0DE;
+      --dk-purple-200: #E2DCEE;
+      --dk-purple-100: #F1EEF8;
+      --dk-purple-50:  #F8F6FB;
+      --dk-ink:        #0F0F12;
+      --dk-gray-900:   #1A1A20;
+      --dk-gray-800:   #2B2B33;
+      --dk-gray-700:   #404049;
+      --dk-gray-600:   #5A5A66;
+      --dk-gray-500:   #7A7A85;
+      --dk-gray-400:   #A3A3AC;
+      --dk-gray-300:   #D6D6D6;
+      --dk-gray-200:   #E8E8EC;
+      --dk-gray-100:   #F2F2F4;
+      --dk-gray-50:    #F8F8FA;
+      --dk-white:      #FFFFFF;
+      --dk-success:    #2E8B57;
+      --dk-success-bg: #E6F4EC;
+      --dk-warning:    #C28A00;
+      --dk-warning-bg: #FBF1DC;
+      --dk-danger:     #B3261E;
+      --dk-danger-bg:  #FBE9E7;
+      --dk-info:       #2C6CB0;
+      --dk-info-bg:    #E5EFF9;
+      --dk-bg:         var(--dk-white);
+      --dk-bg-muted:   var(--dk-gray-50);
+      --dk-bg-tint:    var(--dk-purple-50);
+      --dk-bg-inverse: var(--dk-ink);
+      --dk-fg:         var(--dk-ink);
+      --dk-fg-1:       var(--dk-gray-700);
+      --dk-fg-2:       var(--dk-gray-500);
+      --dk-brand:      var(--dk-purple-700);
+      --dk-brand-hover: var(--dk-purple-800);
+      --dk-brand-soft: var(--dk-purple-100);
+      --dk-border:     var(--dk-gray-200);
+      --dk-border-strong: var(--dk-gray-300);
+      --dk-border-brand: var(--dk-purple-300);
+      --dk-font-sans:  'Poppins', system-ui, -apple-system, sans-serif;
+      --dk-font-mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      --dk-shadow-sm:  0 2px 6px rgba(15,15,18,0.06);
+      --dk-shadow-md:  0 8px 20px rgba(15,15,18,0.08);
+      --dk-shadow-brand: 0 12px 28px rgba(118,96,168,0.28);
+      --dk-radius-sm:  8px;
+      --dk-radius-md:  12px;
+      --dk-radius-lg:  16px;
+      --dk-radius-xl:  24px;
+      --dk-radius-pill: 999px;
+      --dk-ease-out:   cubic-bezier(0.22,1,0.36,1);
+      --dk-dur-base:   240ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--dk-font-sans);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--dk-fg-1);
+      background: var(--dk-bg);
+    }
+    a { color: var(--dk-brand); text-decoration: none; }
+    a:hover { color: var(--dk-brand-hover); text-decoration: underline; }
+
+    /* Layout */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .page-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+      align-items: start;
+      padding: 48px 0 96px;
+    }
+    @media (max-width: 860px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--dk-border);
+      padding: 14px 0;
+    }
+    .navbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .navbar-logo {
+      font-size: 18px; font-weight: 700; color: var(--dk-brand);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .navbar-logo svg { width: 26px; height: 26px; }
+    .navbar-links { display: flex; gap: 8px; align-items: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--dk-font-sans); font-size: 14px; font-weight: 600;
+      border-radius: var(--dk-radius-pill); border: none; cursor: pointer;
+      transition: all var(--dk-dur-base) var(--dk-ease-out);
+      text-decoration: none; padding: 9px 20px; line-height: 1;
+    }
+    .btn-ghost { background: transparent; color: var(--dk-fg-1); }
+    .btn-ghost:hover { background: var(--dk-bg-muted); color: var(--dk-fg); text-decoration: none; }
+    .btn-primary { background: var(--dk-brand); color: #fff; box-shadow: var(--dk-shadow-brand); }
+    .btn-primary:hover { background: var(--dk-brand-hover); color: #fff; text-decoration: none; transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--dk-brand); border: 1.5px solid var(--dk-border-brand); }
+    .btn-outline:hover { background: var(--dk-brand-soft); color: var(--dk-brand-hover); text-decoration: none; }
+
+    /* PRD Header banner */
+    .prd-banner {
+      background: linear-gradient(135deg, var(--dk-purple-900) 0%, var(--dk-purple-700) 100%);
+      padding: 56px 0 48px;
+      color: #fff;
+    }
+    .prd-meta-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
+    }
+    .prd-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--dk-radius-pill); padding: 4px 12px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase; color: rgba(255,255,255,0.85);
+    }
+    .prd-tag.status-live { background: rgba(46,139,87,0.25); border-color: rgba(46,139,87,0.4); color: #7DC9A0; }
+    .prd-title {
+      font-size: clamp(28px, 4vw, 48px); font-weight: 800;
+      line-height: 1.1; letter-spacing: -0.025em; color: #fff;
+      margin-bottom: 16px;
+    }
+    .prd-subtitle { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 640px; line-height: 1.6; margin-bottom: 32px; }
+    .prd-stat-row { display: flex; gap: 32px; flex-wrap: wrap; }
+    .prd-stat-num { font-size: 28px; font-weight: 700; color: #fff; line-height: 1; }
+    .prd-stat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+    /* Sidebar nav */
+    .sidebar { position: sticky; top: 88px; }
+    .sidebar-nav { list-style: none; }
+    .sidebar-section {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--dk-fg-2);
+      padding: 20px 0 8px; margin-top: 8px;
+    }
+    .sidebar-section:first-child { padding-top: 8px; }
+    .sidebar-nav a {
+      display: block; padding: 7px 12px; border-radius: var(--dk-radius-sm);
+      font-size: 13px; font-weight: 500; color: var(--dk-fg-2);
+      transition: all var(--dk-dur-base) var(--dk-ease-out);
+      text-decoration: none;
+    }
+    .sidebar-nav a:hover { background: var(--dk-brand-soft); color: var(--dk-brand); }
+    .sidebar-nav a.active { background: var(--dk-brand-soft); color: var(--dk-brand); font-weight: 600; }
+
+    /* Main content */
+    .prd-section { margin-bottom: 64px; scroll-margin-top: 88px; }
+    .prd-section:last-child { margin-bottom: 0; }
+
+    /* Section header */
+    .section-eyebrow {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--dk-brand); margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(22px, 2.5vw, 30px); font-weight: 700;
+      line-height: 1.2; letter-spacing: -0.02em; color: var(--dk-fg);
+      margin-bottom: 12px;
+    }
+    .section-lead {
+      font-size: 17px; color: var(--dk-fg-2); line-height: 1.7;
+      max-width: 720px; margin-bottom: 32px;
+    }
+
+    /* Divider */
+    .section-divider { border: none; border-top: 1px solid var(--dk-border); margin: 48px 0; }
+
+    /* Info cards */
+    .info-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .info-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 700px) {
+      .info-grid-2, .info-grid-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 900px) {
+      .info-grid-3 { grid-template-columns: 1fr 1fr; }
+    }
+
+    .card {
+      background: var(--dk-white); border: 1px solid var(--dk-border);
+      border-radius: var(--dk-radius-lg); padding: 24px;
+      box-shadow: var(--dk-shadow-sm);
+      transition: box-shadow var(--dk-dur-base) var(--dk-ease-out), transform var(--dk-dur-base) var(--dk-ease-out);
+    }
+    .card:hover { box-shadow: var(--dk-shadow-md); transform: translateY(-2px); }
+    .card-tint { background: var(--dk-bg-tint); border-color: var(--dk-border-brand); }
+    .card-dark { background: var(--dk-bg-inverse); border-color: transparent; }
+
+    /* Feature requirement block */
+    .feature-domain {
+      border: 1px solid var(--dk-border);
+      border-radius: var(--dk-radius-xl);
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: var(--dk-shadow-sm);
+    }
+    .feature-domain:hover { box-shadow: var(--dk-shadow-md); }
+    .feature-domain-header {
+      display: flex; align-items: center; gap: 16px;
+      padding: 24px 28px;
+      background: var(--dk-bg-muted);
+      border-bottom: 1px solid var(--dk-border);
+    }
+    .domain-icon {
+      width: 48px; height: 48px; border-radius: var(--dk-radius-md);
+      background: var(--dk-brand-soft); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0;
+    }
+    .domain-icon svg { width: 24px; height: 24px; }
+    .domain-num {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--dk-brand); margin-bottom: 2px;
+    }
+    .domain-title { font-size: 18px; font-weight: 700; color: var(--dk-fg); }
+    .domain-desc { font-size: 13px; color: var(--dk-fg-2); margin-top: 2px; }
+    .feature-list { list-style: none; padding: 0; }
+    .feature-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: start;
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--dk-border);
+      transition: background var(--dk-dur-base) var(--dk-ease-out);
+    }
+    .feature-item:last-child { border-bottom: none; }
+    .feature-item:hover { background: var(--dk-bg-tint); }
+    .feature-check {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--dk-success-bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .feature-check svg { width: 12px; height: 12px; color: var(--dk-success); }
+    .feature-name { font-size: 15px; font-weight: 600; color: var(--dk-fg); margin-bottom: 4px; }
+    .feature-desc { font-size: 13px; color: var(--dk-fg-2); line-height: 1.6; }
+    .priority-badge {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+      text-transform: uppercase; border-radius: var(--dk-radius-pill);
+      padding: 3px 10px; white-space: nowrap; flex-shrink: 0;
+    }
+    .p0 { background: #FBE9E7; color: #B3261E; }
+    .p1 { background: var(--dk-warning-bg); color: var(--dk-warning); }
+    .p2 { background: var(--dk-info-bg); color: var(--dk-info); }
+    .p3 { background: var(--dk-bg-muted); color: var(--dk-fg-2); }
+
+    /* Persona cards */
+    .persona-card {
+      border: 1px solid var(--dk-border); border-radius: var(--dk-radius-xl);
+      overflow: hidden; box-shadow: var(--dk-shadow-sm);
+    }
+    .persona-header {
+      padding: 24px; display: flex; gap: 16px; align-items: center;
+      background: linear-gradient(135deg, var(--dk-purple-50), var(--dk-white));
+      border-bottom: 1px solid var(--dk-border);
+    }
+    .persona-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--dk-brand); display: flex; align-items: center;
+      justify-content: center; font-size: 24px; flex-shrink: 0;
+    }
+    .persona-name { font-size: 17px; font-weight: 700; color: var(--dk-fg); }
+    .persona-role { font-size: 13px; color: var(--dk-brand); font-weight: 500; }
+    .persona-body { padding: 20px 24px; }
+    .persona-section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--dk-fg-2); margin-bottom: 8px;
+    }
+    .persona-list { list-style: none; margin-bottom: 16px; }
+    .persona-list li {
+      font-size: 13px; color: var(--dk-fg-1); padding: 4px 0;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .persona-list li::before { content: '→'; color: var(--dk-brand); flex-shrink: 0; font-weight: 600; }
+
+    /* Metric table */
+    .metrics-table { width: 100%; border-collapse: collapse; }
+    .metrics-table th {
+      text-align: left; padding: 10px 16px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--dk-fg-2);
+      background: var(--dk-bg-muted); border-bottom: 2px solid var(--dk-border);
+    }
+    .metrics-table td {
+      padding: 14px 16px; font-size: 14px;
+      border-bottom: 1px solid var(--dk-border); vertical-align: top;
+    }
+    .metrics-table tr:last-child td { border-bottom: none; }
+    .metrics-table tr:hover td { background: var(--dk-bg-tint); }
+    .metric-name { font-weight: 600; color: var(--dk-fg); }
+    .metric-target { font-weight: 600; color: var(--dk-brand); }
+
+    /* Tech arch blocks */
+    .arch-row { display: flex; flex-direction: column; gap: 12px; }
+    .arch-layer {
+      border: 1px solid var(--dk-border); border-radius: var(--dk-radius-lg);
+      overflow: hidden;
+    }
+    .arch-layer-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 20px; background: var(--dk-bg-muted);
+      border-bottom: 1px solid var(--dk-border);
+    }
+    .arch-layer-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .arch-layer-title { font-size: 14px; font-weight: 700; color: var(--dk-fg); }
+    .arch-layer-body { padding: 14px 20px; }
+    .arch-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .arch-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--dk-white); border: 1px solid var(--dk-border);
+      border-radius: var(--dk-radius-sm); padding: 5px 12px;
+      font-size: 12px; font-weight: 500; color: var(--dk-fg-1);
+      font-family: var(--dk-font-mono);
+    }
+
+    /* Risk table */
+    .risk-card {
+      border: 1px solid var(--dk-border); border-radius: var(--dk-radius-lg);
+      padding: 20px; margin-bottom: 12px;
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 16px; align-items: start;
+    }
+    .risk-card:last-child { margin-bottom: 0; }
+    .risk-icon { font-size: 22px; flex-shrink: 0; }
+    .risk-title { font-size: 15px; font-weight: 600; color: var(--dk-fg); margin-bottom: 4px; }
+    .risk-desc { font-size: 13px; color: var(--dk-fg-2); }
+    .risk-level {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+      text-transform: uppercase; border-radius: var(--dk-radius-pill);
+      padding: 4px 10px; white-space: nowrap;
+    }
+    .risk-high { background: #FBE9E7; color: #B3261E; }
+    .risk-med { background: var(--dk-warning-bg); color: var(--dk-warning); }
+    .risk-low { background: var(--dk-success-bg); color: var(--dk-success); }
+
+    /* Phase timeline */
+    .phase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 780px) { .phase-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .phase-grid { grid-template-columns: 1fr; } }
+    .phase-card {
+      border: 1px solid var(--dk-border); border-radius: var(--dk-radius-lg);
+      padding: 20px; position: relative; overflow: hidden;
+    }
+    .phase-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    }
+    .phase-1::before { background: var(--dk-brand); }
+    .phase-2::before { background: var(--dk-info); }
+    .phase-3::before { background: var(--dk-warning); }
+    .phase-4::before { background: var(--dk-success); }
+    .phase-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--dk-fg-2); margin-bottom: 4px; }
+    .phase-name { font-size: 15px; font-weight: 700; color: var(--dk-fg); margin-bottom: 8px; }
+    .phase-timeline { font-size: 12px; font-weight: 600; color: var(--dk-brand); margin-bottom: 12px; }
+    .phase-items { list-style: none; }
+    .phase-items li { font-size: 12px; color: var(--dk-fg-2); padding: 3px 0; display: flex; gap: 6px; }
+    .phase-items li::before { content: '·'; color: var(--dk-brand); font-weight: 700; flex-shrink: 0; }
+
+    /* Callout */
+    .callout {
+      border-radius: var(--dk-radius-lg); padding: 20px 24px;
+      display: flex; gap: 16px; align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .callout-info { background: var(--dk-info-bg); border: 1px solid #C5D9F0; }
+    .callout-warn { background: var(--dk-warning-bg); border: 1px solid #E8D49A; }
+    .callout-success { background: var(--dk-success-bg); border: 1px solid #A8D9BC; }
+    .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .callout-title { font-size: 14px; font-weight: 700; color: var(--dk-fg); margin-bottom: 4px; }
+    .callout-body { font-size: 13px; color: var(--dk-fg-1); line-height: 1.6; }
+
+    /* Doc meta pill row */
+    .doc-meta-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px;
+    }
+    .doc-meta-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--dk-bg-muted); border: 1px solid var(--dk-border);
+      border-radius: var(--dk-radius-pill); padding: 6px 14px;
+      font-size: 12px; font-weight: 500; color: var(--dk-fg-2);
+    }
+    .doc-meta-pill strong { color: var(--dk-fg); font-weight: 600; }
+
+    /* Scope table */
+    .scope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 600px) { .scope-grid { grid-template-columns: 1fr; } }
+    .scope-block { border-radius: var(--dk-radius-lg); padding: 20px; }
+    .scope-in { background: var(--dk-success-bg); border: 1px solid #A8D9BC; }
+    .scope-out { background: #FBE9E7; border: 1px solid #F0B8B5; }
+    .scope-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .scope-in .scope-label { color: var(--dk-success); }
+    .scope-out .scope-label { color: #B3261E; }
+    .scope-list { list-style: none; }
+    .scope-list li { font-size: 13px; color: var(--dk-fg-1); padding: 4px 0; display: flex; gap: 8px; align-items: flex-start; }
+    .scope-in .scope-list li::before { content: '✓'; color: var(--dk-success); font-weight: 700; flex-shrink: 0; }
+    .scope-out .scope-list li::before { content: '✕'; color: #B3261E; font-weight: 700; flex-shrink: 0; }
+
+    /* Footer */
+    footer {
+      background: var(--dk-bg-inverse); color: rgba(255,255,255,0.5);
+      padding: 40px 0; font-size: 13px; text-align: center;
+    }
+    footer a { color: var(--dk-purple-300); }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <svg viewBox="0 0 28 28" fill="none">
+          <rect x="6" y="2" width="16" height="24" rx="5" fill="#7660A8"/>
+          <rect x="9" y="6" width="10" height="10" rx="2" fill="white" opacity="0.9"/>
+          <circle cx="14" cy="20" r="2" fill="white" opacity="0.7"/>
+        </svg>
+        KidTrack
+      </a>
+      <div class="navbar-links">
+        <a href="index.html" class="btn btn-ghost">← Campaign</a>
+        <a href="#features" class="btn btn-ghost">Features</a>
+        <a href="#metrics" class="btn btn-ghost">Metrics</a>
+        <a href="#roadmap" class="btn btn-outline">Roadmap</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PRD Banner -->
+<div class="prd-banner">
+  <div class="container">
+    <div class="prd-meta-row">
+      <span class="prd-tag status-live">● Status: Active</span>
+      <span class="prd-tag">Version 1.0</span>
+      <span class="prd-tag">June 2026</span>
+      <span class="prd-tag">Companion App</span>
+    </div>
+    <h1 class="prd-title">KidTrack Companion App<br>Product Requirements Document</h1>
+    <p class="prd-subtitle">
+      BLE-native mobile application for real-time toddler location tracking, activity &amp; sleep analytics,
+      device management, and open-source developer tooling — zero subscription required.
+    </p>
+    <div class="prd-stat-row">
+      <div>
+        <div class="prd-stat-num">6</div>
+        <div class="prd-stat-label">Feature Domains</div>
+      </div>
+      <div>
+        <div class="prd-stat-num">22</div>
+        <div class="prd-stat-label">Requirements</div>
+      </div>
+      <div>
+        <div class="prd-stat-num">iOS + Android</div>
+        <div class="prd-stat-label">Target Platforms</div>
+      </div>
+      <div>
+        <div class="prd-stat-num">$0/mo</div>
+        <div class="prd-stat-label">Subscription Cost</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Page Body -->
+<div class="container">
+  <div class="page-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul class="sidebar-nav">
+        <li class="sidebar-section">Document</li>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#personas">User Personas</a></li>
+        <li><a href="#scope">Scope</a></li>
+        <li class="sidebar-section">Requirements</li>
+        <li><a href="#domain-1">1. Tracking &amp; Maps</a></li>
+        <li><a href="#domain-2">2. Smart Alerts</a></li>
+        <li><a href="#domain-3">3. Health &amp; Sleep</a></li>
+        <li><a href="#domain-4">4. Device Management</a></li>
+        <li><a href="#domain-5">5. Open Source</a></li>
+        <li><a href="#domain-6">6. Multi-Device</a></li>
+        <li class="sidebar-section">Planning</li>
+        <li><a href="#metrics">Success Metrics</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#risks">Risks</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main>
+
+      <!-- OVERVIEW -->
+      <section class="prd-section" id="overview">
+        <div class="doc-meta-row">
+          <span class="doc-meta-pill">Author: <strong>KidTrack Team</strong></span>
+          <span class="doc-meta-pill">Last updated: <strong>June 13, 2026</strong></span>
+          <span class="doc-meta-pill">Reviewed by: <strong>Engineering, Design</strong></span>
+          <span class="doc-meta-pill">Linked hardware: <strong>KidTrack v1.0</strong></span>
+        </div>
+
+        <div class="section-eyebrow">Overview</div>
+        <h2 class="section-title">What we're building and why</h2>
+        <p class="section-lead">
+          The KidTrack hardware watch tracks a toddler's GPS position, activity, and sleep via an nRF52840 MCU,
+          MAX-M8Q GPS module, and LSM6DS3TR-C 6-axis IMU. The companion app is its brain extension —
+          turning raw BLE telemetry into actionable parenting insights, with no cloud dependency and no subscription.
+        </p>
+
+        <div class="info-grid-2">
+          <div class="card card-tint">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--dk-brand); margin-bottom: 12px;">Problem</div>
+            <p style="font-size: 14px; color: var(--dk-fg-1); line-height: 1.7;">
+              Existing child tracker apps require expensive monthly subscriptions, rely on cellular infrastructure,
+              and are built for older children. Parents of toddlers (1–4 years) have no lightweight, offline-capable,
+              open option for proximity monitoring and developmental tracking.
+            </p>
+          </div>
+          <div class="card">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--dk-brand); margin-bottom: 12px;">Solution</div>
+            <p style="font-size: 14px; color: var(--dk-fg-1); line-height: 1.7;">
+              A BLE-native mobile app (iOS + Android) that pairs directly with the KidTrack watch,
+              visualizes location on offline maps, surfaces activity and sleep analytics, and provides
+              a fully open developer mode — all without a server or monthly fee.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-top: 20px;">
+          <div class="callout-icon">ℹ️</div>
+          <div>
+            <div class="callout-title">BLE-first architecture</div>
+            <div class="callout-body">The app communicates exclusively over Bluetooth Low Energy in v1.0. GPS data, IMU telemetry,
+            and battery state are all streamed via the nRF52840's GATT server. Cellular / LTE-M connectivity is a
+            planned stretch goal and will be introduced as an optional backend module in a future release.</div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- PERSONAS -->
+      <section class="prd-section" id="personas">
+        <div class="section-eyebrow">User Personas</div>
+        <h2 class="section-title">Who uses this app</h2>
+        <p class="section-lead">Three distinct user types drive the feature prioritization.</p>
+
+        <div class="info-grid-3" style="gap: 20px;">
+          <div class="persona-card">
+            <div class="persona-header">
+              <div class="persona-avatar">👩</div>
+              <div>
+                <div class="persona-name">Primary Parent</div>
+                <div class="persona-role">Daily active user</div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="persona-section-label">Goals</div>
+              <ul class="persona-list">
+                <li>Know where toddler is at any moment</li>
+                <li>Track naps and overnight sleep quality</li>
+                <li>Get alerted if child wanders too far</li>
+              </ul>
+              <div class="persona-section-label">Frustrations</div>
+              <ul class="persona-list">
+                <li>Monthly subscription fees</li>
+                <li>Complex dashboards not designed for parents</li>
+                <li>No offline functionality</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="persona-card">
+            <div class="persona-header">
+              <div class="persona-avatar">👨</div>
+              <div>
+                <div class="persona-name">Co-Parent / Caregiver</div>
+                <div class="persona-role">Secondary paired user</div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="persona-section-label">Goals</div>
+              <ul class="persona-list">
+                <li>Access the same live data as primary parent</li>
+                <li>Receive handoff when babysitting</li>
+                <li>Simple, low-friction pairing</li>
+              </ul>
+              <div class="persona-section-label">Frustrations</div>
+              <ul class="persona-list">
+                <li>Sharing login credentials is insecure</li>
+                <li>Multiple subscriptions for same household</li>
+                <li>No local peer-to-peer option</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="persona-card">
+            <div class="persona-header">
+              <div class="persona-avatar">🧑‍💻</div>
+              <div>
+                <div class="persona-name">Maker / Developer</div>
+                <div class="persona-role">Open-source contributor</div>
+              </div>
+            </div>
+            <div class="persona-body">
+              <div class="persona-section-label">Goals</div>
+              <ul class="persona-list">
+                <li>Access raw IMU and GPS telemetry streams</li>
+                <li>Flash custom firmware via OTA</li>
+                <li>Export data in open formats</li>
+              </ul>
+              <div class="persona-section-label">Frustrations</div>
+              <ul class="persona-list">
+                <li>Closed, proprietary app ecosystems</li>
+                <li>No dev console or raw data access</li>
+                <li>Vendor lock-in on firmware</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- SCOPE -->
+      <section class="prd-section" id="scope">
+        <div class="section-eyebrow">Scope</div>
+        <h2 class="section-title">In scope vs. out of scope</h2>
+        <p class="section-lead">Version 1.0 is intentionally scoped to BLE-only functionality. Cellular and cloud features are deferred.</p>
+        <div class="scope-grid">
+          <div class="scope-block scope-in">
+            <div class="scope-label">✓ In Scope — v1.0</div>
+            <ul class="scope-list">
+              <li>BLE pairing and live GATT data streaming</li>
+              <li>GPS location display on offline maps</li>
+              <li>BLE proximity alerts (virtual tether)</li>
+              <li>Last-known location pin on BLE drop</li>
+              <li>IMU activity classification display</li>
+              <li>Sleep detection and nap history calendar</li>
+              <li>Battery % display + estimated runtime</li>
+              <li>GPS polling rate toggle (slider)</li>
+              <li>Raw telemetry dev console mode</li>
+              <li>OTA firmware update over BLE</li>
+              <li>Data export (CSV, GPX, JSON)</li>
+              <li>Multi-child device switching</li>
+              <li>Local co-parent BLE auth handoff</li>
+            </ul>
+          </div>
+          <div class="scope-block scope-out">
+            <div class="scope-label">✕ Out of Scope — v1.0</div>
+            <ul class="scope-list">
+              <li>Cellular / LTE-M tracking (stretch goal)</li>
+              <li>Cloud storage or server sync</li>
+              <li>Third-party account login (Google, Apple)</li>
+              <li>Video monitoring or camera integration</li>
+              <li>AI / ML insights (deferred to v2)</li>
+              <li>Wearable heart rate monitoring</li>
+              <li>Social or sharing features</li>
+              <li>In-app purchases or premium tiers</li>
+              <li>Web dashboard / browser app</li>
+              <li>Watch face customization UI</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- FEATURE REQUIREMENTS -->
+      <section class="prd-section" id="features">
+        <div class="section-eyebrow">Feature Requirements</div>
+        <h2 class="section-title">All 6 feature domains</h2>
+        <p class="section-lead">Requirements are tagged P0 (must-have launch blocker), P1 (high priority), P2 (important), or P3 (nice-to-have).</p>
+
+        <!-- Domain 1 -->
+        <div class="feature-domain" id="domain-1">
+          <div class="feature-domain-header">
+            <div class="domain-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="domain-num">Domain 1 of 6</div>
+              <div class="domain-title">Real-Time Tracking &amp; Mapping</div>
+              <div class="domain-desc">Core navigation — proximity view, offline maps, last-known position, and dead-reckoning</div>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Proximity Map View</div>
+                <div class="feature-desc">Live map showing parent phone location relative to child watch position. Updates on each BLE GATT notification from the GPS characteristic. Displays distance in meters and cardinal direction.</div>
+              </div>
+              <span class="priority-badge p0">P0</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Offline Map Tiles &amp; Caching</div>
+                <div class="feature-desc">Allow pre-downloading local map regions (e.g., home neighborhood, local park). Required because BLE-only operation means no guaranteed internet access during use. Cache via MBTiles or equivalent local tile storage.</div>
+              </div>
+              <span class="priority-badge p0">P0</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Last-Known Location (LKL) Pin</div>
+                <div class="feature-desc">On BLE signal loss, immediately drop a persistent pin on the map at the final confirmed GPS coordinate received. Pin shows timestamp and accuracy radius. Tap for address reverse-geocode (if online).</div>
+              </div>
+              <span class="priority-badge p0">P0</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">IMU Dead-Reckoning Visualizer</div>
+                <div class="feature-desc">When GPS lock is lost indoors, use streamed X/Y/Z accelerometer + gyroscope data to render an estimated movement path on the map. Display as a dotted arrow vector. Confidence degrades over time without GPS fix.</div>
+              </div>
+              <span class="priority-badge p2">P2</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Domain 2 -->
+        <div class="feature-domain" id="domain-2">
+          <div class="feature-domain-header">
+            <div class="domain-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+            </div>
+            <div>
+              <div class="domain-num">Domain 2 of 6</div>
+              <div class="domain-title">Smart Alerts &amp; Safety</div>
+              <div class="domain-desc">Proactive monitoring — virtual tether, reconnection alerts, tamper detection</div>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Virtual BLE Tether (Geofence)</div>
+                <div class="feature-desc">Adjustable proximity alert at 10m, 20m, or 30m based on BLE RSSI signal strength drop. When threshold is crossed, trigger a loud distinct alarm on the parent phone (overrides silent mode). User-configurable threshold and alarm tone.</div>
+              </div>
+              <span class="priority-badge p0">P0</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Reconnection Alert</div>
+                <div class="feature-desc">Subtle, reassuring haptic + notification when child comes back into BLE range after a drop. Distinct from the tether alarm. Shows how long the connection was lost and LKL summary.</div>
+              </div>
+              <span class="priority-badge p1">P1</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Tamper / Removal Detection</div>
+                <div class="feature-desc">Monitor IMU for sudden large-magnitude gyroscope spikes inconsistent with normal toddler movement (e.g., rapid rotation + immediate stillness). Alert parent when watch is potentially removed or forcibly pulled off.</div>
+              </div>
+              <span class="priority-badge p2">P2</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Domain 3 -->
+        <div class="feature-domain" id="domain-3">
+          <div class="feature-domain-header">
+            <div class="domain-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <div>
+              <div class="domain-num">Domain 3 of 6</div>
+              <div class="domain-title">Health, Activity &amp; Sleep Analytics</div>
+              <div class="domain-desc">IMU-driven metrics — step counter, activity rings, automated sleep logging, wake alerts</div>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Activity Metrics Dashboard</div>
+                <div class="feature-desc">Daily summary screen showing: step-equivalent count (toddler shuffle translated to steps), active play vs. stillness time as a ring/pie chart, activity level timeline (sparkline per hour). All derived from on-device IMU classification.</div>
+              </div>
+              <span class="priority-badge p1">P1</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Automated Sleep &amp; Nap Logger</div>
+                <div class="feature-desc">Since the watch auto-detects sleep without button input, display a Sleep History Calendar showing: overnight sleep start/end, nap periods (morning vs. afternoon), sleep quality score based on micro-movement restlessness index.</div>
+              </div>
+              <span class="priority-badge p1">P1</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">"Toddler Awake" Push Notification</div>
+                <div class="feature-desc">Fire a quiet/silent push notification the moment the IMU registers wakeful movement patterns after a recorded nap. Configurable per nap session — parents can disable for overnight sleep to avoid disturbance.</div>
+              </div>
+              <span class="priority-badge p1">P1</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Domain 4 -->
+        <div class="feature-domain" id="domain-4">
+          <div class="feature-domain-header">
+            <div class="domain-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="6" width="22" height="13" rx="2"/><path d="M1 10h22"/>
+              </svg>
+            </div>
+            <div>
+              <div class="domain-num">Domain 4 of 6</div>
+              <div class="domain-title">Device Management &amp; Power Metrics</div>
+              <div class="domain-desc">Battery display, estimated runtime, GPS polling toggle, low-battery alerts</div>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Dynamic Battery Life Indicator</div>
+                <div class="feature-desc">Show exact battery percentage from the A0 analog pin telemetry streamed over BLE battery level characteristic. Display as both percentage and a visual gauge. Update in real time on each BLE notification.</div>
+              </div>
+              <span class="priority-badge p0">P0</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Battery-to-Time Calculator</div>
+                <div class="feature-desc">Display estimated remaining runtime in hours based on current GPS polling interval and historical drain rate. Formula: remaining_mAh ÷ current_draw_mA = hours. Update dynamically when user changes GPS mode.</div>
+              </div>
+              <span class="priority-badge p1">P1</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Adaptive GPS Polling Toggle</div>
+                <div class="feature-desc">A slider with two named modes: <strong>High-Security</strong> (5s interval, ~18–24hr battery, recommended for crowded public spaces) and <strong>Battery-Saver</strong> (30s interval, ~3–4 day battery, recommended for home use). Writes new poll interval to watch via BLE write characteristic.</div>
+              </div>
+              <span class="priority-badge p1">P1</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Low Battery Warning System</div>
+                <div class="feature-desc">Send a critical push notification when battery drops to 20% (caution) and again at 10% (critical). Notification text distinguishes urgency: "KidTrack is low — charge soon" vs. "KidTrack critically low — charge now." Persistent until dismissed.</div>
+              </div>
+              <span class="priority-badge p0">P0</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Domain 5 -->
+        <div class="feature-domain" id="domain-5">
+          <div class="feature-domain-header">
+            <div class="domain-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+              </svg>
+            </div>
+            <div>
+              <div class="domain-num">Domain 5 of 6</div>
+              <div class="domain-title">Open-Source &amp; Developer-Friendly Features</div>
+              <div class="domain-desc">Raw telemetry console, OTA firmware updates, data export in open formats</div>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Raw Telemetry Stream (Dev Mode)</div>
+                <div class="feature-desc">Toggleable console view showing in real time: raw NMEA GPS sentences, X/Y/Z accelerometer values (m/s²), X/Y/Z gyroscope values (dps), BLE RSSI (dBm), and MCU-reported activity state. Scrollable log with timestamp. Exportable as plain text.</div>
+              </div>
+              <span class="priority-badge p2">P2</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">OTA Firmware Updates via BLE</div>
+                <div class="feature-desc">Implement Nordic DFU (Device Firmware Upgrade) over BLE to allow flashing updated or community firmware .zip packages directly from the app onto the nRF52840. Show progress bar and checksum verification. Warn user not to close app or leave BLE range during flash.</div>
+              </div>
+              <span class="priority-badge p2">P2</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Data Export</div>
+                <div class="feature-desc">Export all locally stored data in three open formats: <strong>.CSV</strong> (spreadsheet-compatible activity + sleep log), <strong>.GPX</strong> (GPS track for Google Earth / mapping tools), <strong>.JSON</strong> (full structured data dump for developers). Share via system share sheet.</div>
+              </div>
+              <span class="priority-badge p1">P1</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Domain 6 -->
+        <div class="feature-domain" id="domain-6">
+          <div class="feature-domain-header">
+            <div class="domain-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#7660A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div>
+              <div class="domain-num">Domain 6 of 6</div>
+              <div class="domain-title">Multi-Device &amp; Profile Management</div>
+              <div class="domain-desc">Multi-child dashboard, co-parent local BLE auth handoff</div>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Multi-Child Dashboard</div>
+                <div class="feature-desc">Allow pairing and simultaneous monitoring of multiple KidTrack watches (one per child). Each child has a named profile with an avatar and color. Dashboard shows all children's status at a glance. Switch between individual detail views with a tab or swipe.</div>
+              </div>
+              <span class="priority-badge p2">P2</span>
+            </li>
+            <li class="feature-item">
+              <div class="feature-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+              <div>
+                <div class="feature-name">Co-Parent Local Link (BLE Auth Handoff)</div>
+                <div class="feature-desc">Securely authorize a second phone (co-parent or babysitter) to pair with the watch's BLE profile using a one-time passkey shown on the primary device. Whichever authorized phone is closest becomes the active tracking terminal. No server required — handoff is local BLE negotiation only.</div>
+              </div>
+              <span class="priority-badge p2">P2</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- SUCCESS METRICS -->
+      <section class="prd-section" id="metrics">
+        <div class="section-eyebrow">Success Metrics</div>
+        <h2 class="section-title">How we'll know it's working</h2>
+        <p class="section-lead">Measured at 60 and 90 days post-launch with beta cohort of Kickstarter backers.</p>
+
+        <div style="border: 1px solid var(--dk-border); border-radius: var(--dk-radius-lg); overflow: hidden; box-shadow: var(--dk-shadow-sm);">
+          <table class="metrics-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Description</th>
+                <th>Target (Day 60)</th>
+                <th>Target (Day 90)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="metric-name">BLE Pair Success Rate</div></td>
+                <td style="font-size:13px; color: var(--dk-fg-2);">% of first-time pairing attempts that succeed within 60 seconds</td>
+                <td class="metric-target">≥ 92%</td>
+                <td class="metric-target">≥ 97%</td>
+              </tr>
+              <tr>
+                <td><div class="metric-name">Alert Latency</div></td>
+                <td style="font-size:13px; color: var(--dk-fg-2);">Time from BLE RSSI threshold cross to phone alarm firing</td>
+                <td class="metric-target">≤ 3s</td>
+                <td class="metric-target">≤ 1.5s</td>
+              </tr>
+              <tr>
+                <td><div class="metric-name">Sleep Detection Accuracy</div></td>
+                <td style="font-size:13px; color: var(--dk-fg-2);">Auto-detected sleep events matching parent-confirmed times (±5 min)</td>
+                <td class="metric-target">≥ 80%</td>
+                <td class="metric-target">≥ 90%</td>
+              </tr>
+              <tr>
+                <td><div class="metric-name">GPS Display Lag</div></td>
+                <td style="font-size:13px; color: var(--dk-fg-2);">Delay from GPS NMEA sentence to map pin update in the app</td>
+                <td class="metric-target">≤ 2s</td>
+                <td class="metric-target">≤ 1s</td>
+              </tr>
+              <tr>
+                <td><div class="metric-name">OTA Success Rate</div></td>
+                <td style="font-size:13px; color: var(--dk-fg-2);">% of firmware flash operations completing without error or rollback</td>
+                <td class="metric-target">≥ 95%</td>
+                <td class="metric-target">≥ 99%</td>
+              </tr>
+              <tr>
+                <td><div class="metric-name">D30 Retention</div></td>
+                <td style="font-size:13px; color: var(--dk-fg-2);">% of backers who open the app at least once in week 4 post-launch</td>
+                <td class="metric-target">≥ 60%</td>
+                <td class="metric-target">≥ 70%</td>
+              </tr>
+              <tr>
+                <td><div class="metric-name">App Store Rating</div></td>
+                <td style="font-size:13px; color: var(--dk-fg-2);">Average rating across iOS + Android stores after ≥50 reviews</td>
+                <td class="metric-target">≥ 4.2 ★</td>
+                <td class="metric-target">≥ 4.5 ★</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- ARCHITECTURE -->
+      <section class="prd-section" id="architecture">
+        <div class="section-eyebrow">Technical Architecture</div>
+        <h2 class="section-title">System layers</h2>
+        <p class="section-lead">The app is a thin BLE client. All sensor processing happens on-device in the watch firmware.</p>
+
+        <div class="arch-row">
+          <div class="arch-layer">
+            <div class="arch-layer-header">
+              <div class="arch-layer-dot" style="background: #7660A8;"></div>
+              <div class="arch-layer-title">UI Layer — React Native (iOS + Android)</div>
+            </div>
+            <div class="arch-layer-body">
+              <div class="arch-chips">
+                <span class="arch-chip">React Native 0.74+</span>
+                <span class="arch-chip">react-native-maps</span>
+                <span class="arch-chip">Victory Native (charts)</span>
+                <span class="arch-chip">react-navigation</span>
+                <span class="arch-chip">Zustand (state)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-layer">
+            <div class="arch-layer-header">
+              <div class="arch-layer-dot" style="background: #2C6CB0;"></div>
+              <div class="arch-layer-title">BLE Communication Layer</div>
+            </div>
+            <div class="arch-layer-body">
+              <div class="arch-chips">
+                <span class="arch-chip">react-native-ble-plx</span>
+                <span class="arch-chip">BLE 5.0 GATT Client</span>
+                <span class="arch-chip">Nordic DFU (OTA)</span>
+                <span class="arch-chip">Custom GATT UUIDs</span>
+                <span class="arch-chip">RSSI monitoring</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-layer">
+            <div class="arch-layer-header">
+              <div class="arch-layer-dot" style="background: #2E8B57;"></div>
+              <div class="arch-layer-title">Local Storage Layer</div>
+            </div>
+            <div class="arch-layer-body">
+              <div class="arch-chips">
+                <span class="arch-chip">SQLite (location history)</span>
+                <span class="arch-chip">AsyncStorage (settings)</span>
+                <span class="arch-chip">MBTiles (offline maps)</span>
+                <span class="arch-chip">MMKV (fast KV cache)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-layer">
+            <div class="arch-layer-header">
+              <div class="arch-layer-dot" style="background: #C28A00;"></div>
+              <div class="arch-layer-title">Hardware Interface (Watch Firmware — nRF52840)</div>
+            </div>
+            <div class="arch-layer-body">
+              <div class="arch-chips">
+                <span class="arch-chip">GPS GATT Characteristic</span>
+                <span class="arch-chip">IMU GATT Characteristic</span>
+                <span class="arch-chip">Battery Level Characteristic</span>
+                <span class="arch-chip">Activity State Characteristic</span>
+                <span class="arch-chip">Config Write Characteristic</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warn" style="margin-top: 24px;">
+          <div class="callout-icon">⚠️</div>
+          <div>
+            <div class="callout-title">No backend in v1.0</div>
+            <div class="callout-body">All data stays on-device in local SQLite. The co-parent sync is a local BLE peer-to-peer handoff. Cloud backup is a future roadmap item (with explicit opt-in and end-to-end encryption when added).</div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- ROADMAP -->
+      <section class="prd-section" id="roadmap">
+        <div class="section-eyebrow">Roadmap</div>
+        <h2 class="section-title">Delivery phases</h2>
+        <p class="section-lead">Four phases aligned with the hardware Kickstarter timeline.</p>
+
+        <div class="phase-grid">
+          <div class="phase-card phase-1">
+            <div class="phase-label">Phase 1</div>
+            <div class="phase-name">Foundation</div>
+            <div class="phase-timeline">Month 1–2</div>
+            <ul class="phase-items">
+              <li>BLE pairing + GATT client</li>
+              <li>Live GPS map view</li>
+              <li>Battery % display</li>
+              <li>LKL pin on disconnect</li>
+              <li>Tether proximity alarm</li>
+              <li>GPS polling toggle</li>
+            </ul>
+          </div>
+          <div class="phase-card phase-2">
+            <div class="phase-label">Phase 2</div>
+            <div class="phase-name">Analytics</div>
+            <div class="phase-timeline">Month 3</div>
+            <ul class="phase-items">
+              <li>Activity dashboard</li>
+              <li>Sleep history calendar</li>
+              <li>Nap wake notification</li>
+              <li>Battery time calculator</li>
+              <li>Reconnection alert</li>
+              <li>Data export (CSV/GPX/JSON)</li>
+            </ul>
+          </div>
+          <div class="phase-card phase-3">
+            <div class="phase-label">Phase 3</div>
+            <div class="phase-name">Developer Mode</div>
+            <div class="phase-timeline">Month 4</div>
+            <ul class="phase-items">
+              <li>Raw telemetry console</li>
+              <li>Nordic DFU OTA updates</li>
+              <li>IMU dead-reckoning view</li>
+              <li>Offline map tile download</li>
+              <li>Tamper detection alert</li>
+            </ul>
+          </div>
+          <div class="phase-card phase-4">
+            <div class="phase-label">Phase 4</div>
+            <div class="phase-name">Multi-User</div>
+            <div class="phase-timeline">Month 5–6</div>
+            <ul class="phase-items">
+              <li>Multi-child dashboard</li>
+              <li>Co-parent BLE handoff</li>
+              <li>App Store submission</li>
+              <li>Play Store submission</li>
+              <li>v1.0 public release</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- RISKS -->
+      <section class="prd-section" id="risks">
+        <div class="section-eyebrow">Risks &amp; Mitigations</div>
+        <h2 class="section-title">What could go wrong</h2>
+        <p class="section-lead">Key technical and product risks identified during scoping.</p>
+
+        <div>
+          <div class="risk-card">
+            <div class="risk-icon">📡</div>
+            <div>
+              <div class="risk-title">BLE range is insufficient for real-world use</div>
+              <div class="risk-desc">nRF52840 BLE range of ~30m may be too short in open spaces like large parks. RSSI-based distance is also inconsistent across phone hardware.</div>
+              <div style="margin-top: 8px; font-size: 12px; color: var(--dk-success); font-weight: 600;">Mitigation: LKL pin covers the gap. Stretch goal adds cellular LTE-M. RSSI thresholds are user-adjustable.</div>
+            </div>
+            <span class="risk-level risk-high">High</span>
+          </div>
+
+          <div class="risk-card">
+            <div class="risk-icon">🗺️</div>
+            <div>
+              <div class="risk-title">Offline maps are large and complex to cache</div>
+              <div class="risk-desc">MBTiles for a city-sized region can be 500MB+. Storage and UX around downloading tile packs adds complexity and friction.</div>
+              <div style="margin-top: 8px; font-size: 12px; color: var(--dk-success); font-weight: 600;">Mitigation: Limit initial tile cache to a small radius (e.g., 5km around home). Defer large region download to v1.1.</div>
+            </div>
+            <span class="risk-level risk-med">Medium</span>
+          </div>
+
+          <div class="risk-card">
+            <div class="risk-icon">😴</div>
+            <div>
+              <div class="risk-title">Sleep detection false-positive rate is high for toddlers</div>
+              <div class="risk-desc">Toddlers are restless sleepers. IMU-based sleep detection tuned for adults may generate frequent false wakes or miss nap start.</div>
+              <div style="margin-top: 8px; font-size: 12px; color: var(--dk-success); font-weight: 600;">Mitigation: Use beta backer feedback to tune thresholds. Provide manual override / correction UI. Ship with conservative (less sensitive) defaults.</div>
+            </div>
+            <span class="risk-level risk-med">Medium</span>
+          </div>
+
+          <div class="risk-card">
+            <div class="risk-icon">📱</div>
+            <div>
+              <div class="risk-title">iOS BLE background scanning limitations</div>
+              <div class="risk-desc">iOS restricts background BLE scanning. The proximity alarm may not fire if the app is fully backgrounded and the phone is locked on iOS 17+.</div>
+              <div style="margin-top: 8px; font-size: 12px; color: var(--dk-success); font-weight: 600;">Mitigation: Use Core Bluetooth's state restoration + background modes. Display prominent "keep screen on" guidance for high-security use cases.</div>
+            </div>
+            <span class="risk-level risk-high">High</span>
+          </div>
+
+          <div class="risk-card">
+            <div class="risk-icon">🔒</div>
+            <div>
+              <div class="risk-title">Co-parent BLE handoff is spoofable</div>
+              <div class="risk-desc">A local BLE passkey system without a server-side trust anchor could be vulnerable to nearby spoofing attacks.</div>
+              <div style="margin-top: 8px; font-size: 12px; color: var(--dk-success); font-weight: 600;">Mitigation: Use BLE Secure Simple Pairing (SSP) with numeric comparison. Require physical proximity (&lt;1m) during handoff. Document security model openly.</div>
+            </div>
+            <span class="risk-level risk-low">Low</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p style="font-weight: 600; font-size: 15px; color: #fff; margin-bottom: 8px;">KidTrack Companion App — Product Requirements Document v1.0</p>
+    <p>June 2026 &nbsp;·&nbsp; <a href="index.html">← Back to Kickstarter Campaign</a> &nbsp;·&nbsp; Open-source under MIT License</p>
+  </div>
+</footer>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('.prd-section[id]');
+  const links = document.querySelectorAll('.sidebar-nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
